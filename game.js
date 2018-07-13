@@ -251,7 +251,7 @@ Game.prototype.update = function(){
 		var hollPosition = Math.round(Math.random() * (this.height - deltaBord * 2 - pipeHoll)) +  deltaBord;
 		this.pipes.push(new Pipe({x:this.width, y:0, height:hollPosition}));
 		this.pipes.push(new Pipe({x:this.width, y:hollPosition+pipeHoll, height:this.height}));
-		this.foods.push(new Food({x:this.width, y:this.height/2, isPoison:Math.random()<0.5}));
+		this.foods.push(new Food({x:this.width, y:this.height/2, isPoison: Math.random()<0.5 }));
 	}
 
 	this.interval++;
@@ -299,8 +299,11 @@ Game.prototype.display = function(){
 	}
 
 	for(var i in this.foods){
-		console.log(this.foods[i])
-		this.ctx.drawImage(images.avocado, this.foods[i].x, this.foods[i].y + this.foods[i].height, this.foods[i].width, this.foods[i].height);
+		if (this.foods[i].isPoison) {
+			this.ctx.drawImage(images.avocadoPoison, this.foods[i].x, this.foods[i].y + this.foods[i].height, this.foods[i].width, this.foods[i].height);
+		} else {
+			this.ctx.drawImage(images.avocado, this.foods[i].x, this.foods[i].y + this.foods[i].height, this.foods[i].width, this.foods[i].height);
+		}
 	}
 
 	this.ctx.fillStyle = "#FFC600";
@@ -335,6 +338,7 @@ window.onload = function(){
 		pipetop:"./img/pipetop.png",
 		pipebottom:"./img/pipebottom.png",
 		avocado:"./img/avocado.png",
+		avocadoPoison:"./img/avocado-poison.png",
 	}
 
 	var start = function(){
