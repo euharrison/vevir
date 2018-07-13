@@ -121,8 +121,36 @@ Pipe.prototype.isOut = function(){
 	}
 }
 
+var Food = function(json){
+	this.x = 0;
+	this.y = 0;
+	this.width = 130;
+	this.height = 130;
+	this.speed = 3;
+	this.isPoison = false;
+
+	this.init(json);
+}
+
+Food.prototype.init = function(json){
+	for(var i in json){
+		this[i] = json[i];
+	}
+}
+
+Food.prototype.update = function(){
+	this.x -= this.speed;
+}
+
+Food.prototype.isOut = function(){
+	if(this.x + this.width < 0){
+		return true;
+	}
+}
+
 var Game = function(){
 	this.pipes = [];
+	this.foods = [];
 	this.birds = [];
 	this.score = 0;
 	this.canvas = document.querySelector("#flappy");
@@ -143,6 +171,7 @@ Game.prototype.start = function(){
 	this.interval = 0;
 	this.score = 0;
 	this.pipes = [];
+	this.foods = [];
 	this.birds = [];
 
 	this.gen = Neuvol.nextGeneration();
@@ -161,6 +190,14 @@ Game.prototype.update = function(){
 		for(var i = 0; i < this.pipes.length; i+=2){
 			if(this.pipes[i].x + this.pipes[i].width > this.birds[0].x){
 				nextHoll = this.pipes[i].height/this.height;
+				break;
+			}
+		}
+	}
+	if(this.birds.length > 0){
+		for(var i = 0; i < this.foods.length; i+=2){
+			if(this.foods[i].x + this.foods[i].width > this.birds[0].x){
+				nextHoll = this.foods[i].height/this.height;
 				break;
 			}
 		}
@@ -200,12 +237,21 @@ Game.prototype.update = function(){
 		}
 	}
 
+	for(var i = 0; i < this.foods.length; i++){
+		this.foods[i].update();
+		if(this.foods[i].isOut()){
+			this.foods.splice(i, 1);
+			i--;
+		}
+	}
+
 	if(this.interval == 0){
 		var deltaBord = 50;
 		var pipeHoll = 120;
 		var hollPosition = Math.round(Math.random() * (this.height - deltaBord * 2 - pipeHoll)) +  deltaBord;
 		this.pipes.push(new Pipe({x:this.width, y:0, height:hollPosition}));
 		this.pipes.push(new Pipe({x:this.width, y:hollPosition+pipeHoll, height:this.height}));
+		this.foods.push(new Food({x:this.width, y:this.height/2, isPoison:Math.random()<0.5}));
 	}
 
 	this.interval++;
@@ -252,6 +298,11 @@ Game.prototype.display = function(){
 		}
 	}
 
+	for(var i in this.foods){
+		console.log(this.foods[i])
+		this.ctx.drawImage(images.avocado, this.foods[i].x, this.foods[i].y + this.foods[i].height, this.foods[i].width, this.foods[i].height);
+	}
+
 	this.ctx.fillStyle = "#FFC600";
 	this.ctx.strokeStyle = "#CE9E00";
 	for(var i in this.birds){
@@ -282,7 +333,8 @@ window.onload = function(){
 		bird:"./img/bird.png",
 		background:"./img/background.png",
 		pipetop:"./img/pipetop.png",
-		pipebottom:"./img/pipebottom.png"
+		pipebottom:"./img/pipebottom.png",
+		avocado:"./img/avocado.png",
 	}
 
 	var start = function(){
