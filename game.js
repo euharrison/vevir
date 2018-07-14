@@ -60,6 +60,7 @@ var Bird = function(json){
 	this.gravity = 0;
 	this.velocity = 0.3;
 	this.jump = -6;
+	this.health = 500;
 
 	this.init(json);
 }
@@ -74,12 +75,21 @@ Bird.prototype.flap = function(){
 	this.gravity = this.jump;
 }
 
+Bird.prototype.eat = function(food){
+	if (food) {
+		this.health += food.isPoison ? -100 : 100;
+	}
+	console.log(this.health);
+}
+
 Bird.prototype.update = function(){
-	this.gravity += this.velocity;
-	this.y += this.gravity;
+	// this.gravity += this.velocity;
+	// this.y += this.gravity;
 }
 
 Bird.prototype.isDead = function(height, pipes){
+	return this.health < 0;
+
 	if(this.y >= height || this.y + this.height <= 0){
 		return true;
 	}
@@ -174,9 +184,14 @@ Game.prototype.start = function(){
 	this.foods = [];
 	this.birds = [];
 
+	this.nextFood = null;
+
 	this.gen = Neuvol.nextGeneration();
 	for(var i in this.gen){
-		var b = new Bird();
+		var percent = Number(i)/this.gen.length;
+		var b = new Bird({
+			y: this.height * percent,
+		});
 		this.birds.push(b)
 	}
 	this.generation++;
@@ -194,39 +209,46 @@ Game.prototype.update = function(){
 			}
 		}
 	}
-	if(this.birds.length > 0){
-		for(var i = 0; i < this.foods.length; i+=2){
-			if(this.foods[i].x + this.foods[i].width > this.birds[0].x){
-				nextHoll = this.foods[i].height/this.height;
-				break;
-			}
-		}
+
+	if(!this.nextFood){
+		this.nextFood = new Food({x:this.width, y:this.height/2, isPoison: Math.random()<0.5 });
+		this.foods.push(this.nextFood);
 	}
+
+	var foodEaten = false;
 
 	for(var i in this.birds){
 		if(this.birds[i].alive){
+			if (this.nextFood.x < this.width/2) {
+				foodEaten = true;
 
-			var inputs = [
-			this.birds[i].y / this.height,
-			nextHoll
-			];
-
-			var res = this.gen[i].compute(inputs);
-			if(res > 0.5){
-				this.birds[i].flap();
+				var inputs = [
+					this.nextFood.isPoison ? 1 : 0,
+					// this.birds[i].y / this.height,
+					// nextHoll
+				];
+				var res = this.gen[i].compute(inputs);
+				if(res > 0.5){
+					// this.birds[i].flap();
+					this.birds[i].eat(this.nextFood);
+				}
 			}
 
 			this.birds[i].update();
 			if(this.birds[i].isDead(this.height, this.pipes)){
 				this.birds[i].alive = false;
 				this.alives--;
-				//console.log(this.alives);
+				// console.log(this.alives);
 				Neuvol.networkScore(this.gen[i], this.score);
 				if(this.isItEnd()){
 					this.start();
 				}
 			}
 		}
+	}
+
+	if (foodEaten) {
+		this.nextFood = null;
 	}
 
 	for(var i = 0; i < this.pipes.length; i++){
@@ -247,11 +269,10 @@ Game.prototype.update = function(){
 
 	if(this.interval == 0){
 		var deltaBord = 50;
-		var pipeHoll = 120;
+		var pipeHoll = 320;
 		var hollPosition = Math.round(Math.random() * (this.height - deltaBord * 2 - pipeHoll)) +  deltaBord;
 		this.pipes.push(new Pipe({x:this.width, y:0, height:hollPosition}));
 		this.pipes.push(new Pipe({x:this.width, y:hollPosition+pipeHoll, height:this.height}));
-		this.foods.push(new Food({x:this.width, y:this.height/2, isPoison: Math.random()<0.5 }));
 	}
 
 	this.interval++;
