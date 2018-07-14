@@ -60,7 +60,7 @@ var Bird = function(json){
 	this.gravity = 0;
 	this.velocity = 0.3;
 	this.jump = -6;
-	this.health = 2500;
+	this.weight = 70;
 
 	this.init(json);
 }
@@ -73,16 +73,16 @@ Bird.prototype.init = function(json){
 
 Bird.prototype.eat = function(food){
 	if (food) {
-		this.health += food.isPoison ? -500 : 500;
+		this.weight += food.isPoison ? -10 : 0.5;
 	}
 }
 
 Bird.prototype.update = function(){
-	this.health--;
+	this.weight -= 0.01;
 }
 
 Bird.prototype.isDead = function(){
-	return this.health < 0 || this.health > 5000;
+	return this.weight < 40 || this.weight > 100;
 }
 
 var Food = function(json){
@@ -167,7 +167,7 @@ Game.prototype.update = function(){
 				foodEaten = true;
 
 				var inputs = [
-					this.birds[i].health,
+					this.birds[i].weight,
 					this.nextFood.isPoison ? 1 : 0,
 				];
 				var res = this.gen[i].compute(inputs);
@@ -241,11 +241,16 @@ Game.prototype.display = function(){
 		} else {
 			this.ctx.drawImage(images.avocado, x, y, this.foods[i].width, this.foods[i].height);
 		}
+		if (this.foods[i].isPoison) {
+			this.ctx.fillStyle = "#FF0000";
+		} else {
+			this.ctx.fillStyle = "#FFFFFF";
+		}
 		this.ctx.fillText('Alimento '+this.foods[i].id, x, y);
-		this.ctx.fillText(this.foods[i].isPoison ? 'POISON!!!' : 'saudavel', x, y + 20);
+		this.ctx.fillText(this.foods[i].isPoison ? 'VENENO !!!' : 'Saudavel', x, y + 20);
 	}
 
-	this.ctx.fillStyle = "#FFC600";
+	this.ctx.fillStyle = "#FFFFFF";
 	this.ctx.strokeStyle = "#CE9E00";
 	for(var i in this.birds){
 		if(this.birds[i].alive){
@@ -253,7 +258,8 @@ Game.prototype.display = function(){
 			this.ctx.translate(this.birds[i].x + this.birds[i].width/2, this.birds[i].y + this.birds[i].height/2);
 			this.ctx.rotate(Math.PI/2 * this.birds[i].gravity/20);
 			this.ctx.drawImage(images.bird, -this.birds[i].width/2, -this.birds[i].height/2, this.birds[i].width, this.birds[i].height);
-			this.ctx.fillText(this.birds[i].health, 0, 0);
+
+			this.ctx.fillText(this.birds[i].weight.toFixed(1)+'kg', 25, 8);
 			this.ctx.restore();
 		}
 	}
