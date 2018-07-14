@@ -91,9 +91,11 @@ var Food = function(json){
 	this.width = 130;
 	this.height = 130;
 	this.speed = 3;
-	this.isPoison = false;
+	this.id = 1;
 
 	this.init(json);
+
+	this.isPoison = this.id % 2 === 1;
 }
 
 Food.prototype.init = function(json){
@@ -157,7 +159,7 @@ Game.prototype.update = function(){
 		if(this.birds[i].alive){
 
 			if (!this.nextFood) {
-				this.nextFood = new Food({x:this.width, y:this.height/2, isPoison: Math.random()<0.5 });
+				this.nextFood = new Food({x:this.width, y:this.height/2, id: Math.floor(Math.random() * 100) + 1 });
 				this.foods.push(this.nextFood);
 			}
 
@@ -239,7 +241,8 @@ Game.prototype.display = function(){
 		} else {
 			this.ctx.drawImage(images.avocado, x, y, this.foods[i].width, this.foods[i].height);
 		}
-		this.ctx.fillText(this.foods[i].isPoison ? 'POISON!!!' : 'Alimento', x, y);
+		this.ctx.fillText('Alimento '+this.foods[i].id, x, y);
+		this.ctx.fillText(this.foods[i].isPoison ? 'POISON!!!' : 'saudavel', x, y + 20);
 	}
 
 	this.ctx.fillStyle = "#FFC600";
