@@ -72,13 +72,16 @@ Bird.prototype.init = function(json){
 }
 
 Bird.prototype.eat = function(food){
-	if (food) {
-		this.weight += food.isPoison ? -10 : 10;
-	}
+	this.eatLastFood = true;
+	this.weight += food.isPoison ? -10 : 10;
+}
+
+Bird.prototype.dismissFood = function(food){
+	this.eatLastFood = false;
 }
 
 Bird.prototype.update = function(){
-	this.weight -= 0.01;
+	this.weight -= 0.04;
 }
 
 Bird.prototype.isDead = function(){
@@ -141,7 +144,7 @@ Game.prototype.start = function(){
 	for(var i in this.gen){
 		var percent = Number(i)/this.gen.length;
 		var b = new Bird({
-			x: this.width / 2,
+			x: this.width * 0.2,
 			y: this.height * percent,
 		});
 		this.birds.push(b)
@@ -153,6 +156,14 @@ Game.prototype.start = function(){
 Game.prototype.update = function(){
 	this.backgroundx += this.backgroundSpeed;
 
+	for(var i = 0; i < this.foods.length; i++){
+		this.foods[i].update();
+		if(this.foods[i].isOut()){
+			this.foods.splice(i, 1);
+			i--;
+		}
+	}
+
 	var foodEaten = false;
 
 	for(var i in this.birds){
@@ -163,16 +174,18 @@ Game.prototype.update = function(){
 				this.foods.push(this.nextFood);
 			}
 
-			if (this.nextFood.x < this.width/2) {
+			if (this.nextFood.x < this.width * 0.2) {
 				foodEaten = true;
 
 				var inputs = [
-					this.birds[i].weight,
-					this.nextFood.isPoison ? 1 : 0,
+					this.nextFood.id,
+					Math.floor(this.birds[i].weight),
 				];
 				var res = this.gen[i].compute(inputs);
 				if(res > 0.5){
 					this.birds[i].eat(this.nextFood);
+				} else {
+					this.birds[i].dismissFood(this.nextFood);
 				}
 			}
 
@@ -193,14 +206,6 @@ Game.prototype.update = function(){
 
 	if (foodEaten) {
 		this.nextFood = null;
-	}
-
-	for(var i = 0; i < this.foods.length; i++){
-		this.foods[i].update();
-		if(this.foods[i].isOut()){
-			this.foods.splice(i, 1);
-			i--;
-		}
 	}
 
 	this.score++;
@@ -235,7 +240,7 @@ Game.prototype.display = function(){
 
 	for(var i in this.foods){
 		var x = this.foods[i].x;
-		var y = this.foods[i].y + this.foods[i].height;
+		var y = (this.foods[i].y + this.foods[i].height) * (this.foods[i].id/100);
 		if (this.foods[i].isPoison) {
 			this.ctx.drawImage(images.avocadoPoison, x, y, this.foods[i].width, this.foods[i].height);
 		} else {
@@ -257,9 +262,16 @@ Game.prototype.display = function(){
 			this.ctx.save(); 
 			this.ctx.translate(this.birds[i].x + this.birds[i].width/2, this.birds[i].y + this.birds[i].height/2);
 			this.ctx.rotate(Math.PI/2 * this.birds[i].gravity/20);
-			this.ctx.drawImage(images.bird, -this.birds[i].width/2, -this.birds[i].height/2, this.birds[i].width, this.birds[i].height);
+
+			var maxDiff = 25;
+			var sizePercent = 1 + (this.birds[i].weight - 75)/maxDiff;
+			var width = this.birds[i].width * sizePercent;
+			var height = this.birds[i].height * sizePercent;
+			this.ctx.drawImage(images.bird, -width/2, -height/2, width, height);
 
 			this.ctx.fillText(this.birds[i].weight.toFixed(2)+'kg', 25, 8);
+			this.ctx.fillText(this.birds[i].eatLastFood ? 'nham nham' : '', 100, 8);
+
 			this.ctx.restore();
 		}
 	}
