@@ -60,7 +60,7 @@ var Bird = function(json){
 	this.gravity = 0;
 	this.velocity = 0.3;
 	this.jump = -6;
-	this.weight = 70;
+	this.weight = 75;
 
 	this.init(json);
 }
@@ -73,7 +73,7 @@ Bird.prototype.init = function(json){
 
 Bird.prototype.eat = function(food){
 	if (food) {
-		this.weight += food.isPoison ? -10 : 0.5;
+		this.weight += food.isPoison ? -10 : 10;
 	}
 }
 
@@ -82,7 +82,7 @@ Bird.prototype.update = function(){
 }
 
 Bird.prototype.isDead = function(){
-	return this.weight < 40 || this.weight > 100;
+	return this.weight < 50 || this.weight > 100;
 }
 
 var Food = function(json){
@@ -259,7 +259,7 @@ Game.prototype.display = function(){
 			this.ctx.rotate(Math.PI/2 * this.birds[i].gravity/20);
 			this.ctx.drawImage(images.bird, -this.birds[i].width/2, -this.birds[i].height/2, this.birds[i].width, this.birds[i].height);
 
-			this.ctx.fillText(this.birds[i].weight.toFixed(1)+'kg', 25, 8);
+			this.ctx.fillText(this.birds[i].weight.toFixed(2)+'kg', 25, 8);
 			this.ctx.restore();
 		}
 	}
