@@ -26,6 +26,7 @@ var Neuvol;
 var game;
 var FPS = 60;
 var maxScore=0;
+var differentTypesOfFood = 4;
 
 var images = {};
 
@@ -73,7 +74,7 @@ Bird.prototype.init = function(json){
 
 Bird.prototype.eat = function(food){
 	this.eatLastFood = true;
-	this.weight += food.isPoison ? -10 : 10;
+	this.weight += food.isPoison ? -20 : 5;
 }
 
 Bird.prototype.dismissFood = function(food){
@@ -81,7 +82,7 @@ Bird.prototype.dismissFood = function(food){
 }
 
 Bird.prototype.update = function(){
-	this.weight -= 0.04;
+	this.weight -= 0.02;
 }
 
 Bird.prototype.isDead = function(){
@@ -93,7 +94,7 @@ var Food = function(json){
 	this.y = 0;
 	this.width = 130;
 	this.height = 130;
-	this.speed = 8;
+	this.speed = 5;
 	this.id = 1;
 
 	this.init(json);
@@ -170,7 +171,8 @@ Game.prototype.update = function(){
 		if(this.birds[i].alive){
 
 			if (!this.nextFood) {
-				this.nextFood = new Food({x:this.width, y:this.height/2, id: Math.floor(Math.random() * 10) + 1 });
+				var id = Math.floor(Math.random() * differentTypesOfFood) + 1;
+				this.nextFood = new Food({x:this.width, y:(id-1)*this.height/differentTypesOfFood, id:id });
 				this.foods.push(this.nextFood);
 			}
 
@@ -179,7 +181,7 @@ Game.prototype.update = function(){
 
 				var inputs = [
 					this.nextFood.id,
-					Math.floor(this.birds[i].weight),
+					Math.floor(this.birds[i].weight/10),
 				];
 				var res = this.gen[i].compute(inputs);
 				if(res > 0.5){
@@ -240,7 +242,7 @@ Game.prototype.display = function(){
 
 	for(var i in this.foods){
 		var x = this.foods[i].x;
-		var y = (this.foods[i].y + this.foods[i].height) * (this.foods[i].id/100);
+		var y = this.foods[i].y;
 		if (this.foods[i].isPoison) {
 			this.ctx.drawImage(images.avocadoPoison, x, y, this.foods[i].width, this.foods[i].height);
 		} else {
@@ -251,8 +253,8 @@ Game.prototype.display = function(){
 		} else {
 			this.ctx.fillStyle = "#FFFFFF";
 		}
-		this.ctx.fillText('Alimento '+this.foods[i].id, x, y);
-		this.ctx.fillText(this.foods[i].isPoison ? 'VENENO !!!' : 'Saudavel', x, y + 20);
+		this.ctx.fillText('Alimento '+this.foods[i].id, x+130, y+50);
+		this.ctx.fillText(this.foods[i].isPoison ? 'VENENO !!!' : 'Saudavel', x+130, y+50+20);
 	}
 
 	this.ctx.fillStyle = "#FFFFFF";
@@ -269,7 +271,7 @@ Game.prototype.display = function(){
 			var height = this.birds[i].height * sizePercent;
 			this.ctx.drawImage(images.bird, -width/2, -height/2, width, height);
 
-			this.ctx.fillText(this.birds[i].weight.toFixed(2)+'kg', 25, 8);
+			this.ctx.fillText(this.birds[i].weight.toFixed(0)+'kg', 25, 8);
 			this.ctx.fillText(this.birds[i].eatLastFood ? 'nham nham' : '', 100, 8);
 
 			this.ctx.restore();
