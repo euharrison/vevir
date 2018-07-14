@@ -26,7 +26,7 @@ var Neuvol;
 var game;
 var FPS = 60;
 var maxScore=0;
-var differentTypesOfFood = 4;
+var differentTypesOfFood = 10;
 
 var images = {};
 
@@ -72,13 +72,11 @@ Bird.prototype.init = function(json){
 	}
 }
 
-Bird.prototype.eat = function(food){
-	this.eatLastFood = true;
-	this.weight += food.isPoison ? -20 : 5;
-}
-
-Bird.prototype.dismissFood = function(food){
-	this.eatLastFood = false;
+Bird.prototype.checkFood = function(food, fed){
+	if (fed) {
+		this.weight += food.isPoison ? -20 : 5;
+	}
+	this.fedLastFood = fed;
 }
 
 Bird.prototype.update = function(){
@@ -86,7 +84,7 @@ Bird.prototype.update = function(){
 }
 
 Bird.prototype.isDead = function(){
-	return this.weight < 35 || this.weight > 115;
+	return this.weight < 50 || this.weight > 100;
 }
 
 var Food = function(json){
@@ -183,12 +181,10 @@ Game.prototype.update = function(){
 					this.nextFood.id,
 					Math.floor(this.birds[i].weight/10),
 				];
+				console.log(inputs)
 				var res = this.gen[i].compute(inputs);
-				if(res > 0.5){
-					this.birds[i].eat(this.nextFood);
-				} else {
-					this.birds[i].dismissFood(this.nextFood);
-				}
+				var fed = res > 0.5;
+				this.birds[i].checkFood(this.nextFood, fed);
 			}
 
 			this.birds[i].update();
@@ -198,10 +194,6 @@ Game.prototype.update = function(){
 				this.alives--;
 
 				Neuvol.networkScore(this.gen[i], this.score);
-
-				if(this.isItEnd()){
-					this.start();
-				}
 			}
 		}
 	}
@@ -222,6 +214,10 @@ Game.prototype.update = function(){
 		setTimeout(function(){
 			self.update();
 		}, 1000/FPS);
+	}
+
+	if(this.isItEnd()){
+		this.start();
 	}
 }
 
@@ -265,14 +261,14 @@ Game.prototype.display = function(){
 			this.ctx.translate(this.birds[i].x + this.birds[i].width/2, this.birds[i].y + this.birds[i].height/2);
 			this.ctx.rotate(Math.PI/2 * this.birds[i].gravity/20);
 
-			var maxDiff = 40;
+			var maxDiff = 25;
 			var sizePercent = 1 + (this.birds[i].weight - 75)/maxDiff;
 			var width = this.birds[i].width * sizePercent;
 			var height = this.birds[i].height * sizePercent;
 			this.ctx.drawImage(images.bird, -width/2, -height/2, width, height);
 
 			this.ctx.fillText(this.birds[i].weight.toFixed(0)+'kg', 25, 8);
-			this.ctx.fillText(this.birds[i].eatLastFood ? 'nham nham' : '', 100, 8);
+			this.ctx.fillText(this.birds[i].fedLastFood ? 'nham nham' : '', 100, 8);
 
 			this.ctx.restore();
 		}
