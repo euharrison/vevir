@@ -240,7 +240,7 @@ Game.prototype.display = function(){
 		var x = this.foods[i].x;
 		var y = this.foods[i].y;
 		if (this.foods[i].isPoison) {
-			this.ctx.drawImage(images.avocadoPoison, x, y, this.foods[i].width, this.foods[i].height);
+			this.ctx.drawImage(images.poop, x, y, this.foods[i].width, this.foods[i].height);
 		} else {
 			this.ctx.drawImage(images.avocado, x, y, this.foods[i].width, this.foods[i].height);
 		}
@@ -292,7 +292,7 @@ window.onload = function(){
 		bird:"./img/bird.png",
 		background:"./img/background.png",
 		avocado:"./img/avocado.png",
-		avocadoPoison:"./img/avocado-poison.png",
+		poop:"./img/poop.png",
 	}
 
 	var start = function(){
