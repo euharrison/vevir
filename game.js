@@ -85,7 +85,7 @@ Bird.prototype.update = function(){
 }
 
 Bird.prototype.isDead = function(){
-	return this.weight < 50 || this.weight > 100;
+	return this.weight < 35 || this.weight > 115;
 }
 
 var Food = function(json){
@@ -93,7 +93,7 @@ var Food = function(json){
 	this.y = 0;
 	this.width = 130;
 	this.height = 130;
-	this.speed = 3;
+	this.speed = 8;
 	this.id = 1;
 
 	this.init(json);
@@ -170,7 +170,7 @@ Game.prototype.update = function(){
 		if(this.birds[i].alive){
 
 			if (!this.nextFood) {
-				this.nextFood = new Food({x:this.width, y:this.height/2, id: Math.floor(Math.random() * 100) + 1 });
+				this.nextFood = new Food({x:this.width, y:this.height/2, id: Math.floor(Math.random() * 10) + 1 });
 				this.foods.push(this.nextFood);
 			}
 
@@ -263,7 +263,7 @@ Game.prototype.display = function(){
 			this.ctx.translate(this.birds[i].x + this.birds[i].width/2, this.birds[i].y + this.birds[i].height/2);
 			this.ctx.rotate(Math.PI/2 * this.birds[i].gravity/20);
 
-			var maxDiff = 25;
+			var maxDiff = 40;
 			var sizePercent = 1 + (this.birds[i].weight - 75)/maxDiff;
 			var width = this.birds[i].width * sizePercent;
 			var height = this.birds[i].height * sizePercent;
