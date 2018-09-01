@@ -1,4 +1,6 @@
-// import THREE from 'three';
+import * as THREE from 'three';
+
+import Detector from './Detector';
 
 import './scss/style.scss';
 
