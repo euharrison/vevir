@@ -72,9 +72,20 @@ class Human extends THREE.Group {
     this.add( this.mouth );
   }
 
-  update() {
+  update(weight) {
     var timerMouth = Date.now() * 0.01;
     this.mouth.scale.y = MathMap(Math.sin(timerMouth), -1, 1, 0.5, 1);
+
+    const isDead = weight < 50 || weight > 100;
+    if (isDead) {
+      // TODO delete human
+      // human.parent.remove(this);
+      this.visible = false;
+      this.scale.set(0.001, 0.001, 0.001);
+    } else {
+      const scale = MathMap(weight, 50, 70, 0.25, 1);
+      this.scale.set(scale, scale, scale);
+    }
   }
 }
 

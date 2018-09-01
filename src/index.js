@@ -1,4 +1,5 @@
 import Render from './Render';
+import Human from './Human';
 
 (function() {
 	var timeouts = [];
@@ -65,6 +66,9 @@ var Bird = function(json){
 	this.jump = -6;
 	this.weight = 75;
 
+	this.human = new Human();
+	Render.addHuman(this.human, json.index);
+
 	this.init(json);
 }
 
@@ -83,6 +87,8 @@ Bird.prototype.checkFood = function(food, fed){
 
 Bird.prototype.update = function(){
 	this.weight -= 0.02;
+
+	this.human.update(this.weight);
 }
 
 Bird.prototype.isDead = function(){
@@ -135,6 +141,8 @@ var Game = function(){
 }
 
 Game.prototype.start = function(){
+	// TODO clean or reuse humans
+
 	this.score = 0;
 	this.foods = [];
 	this.birds = [];
@@ -148,10 +156,9 @@ Game.prototype.start = function(){
 		var b = new Bird({
 			x: this.width * 0.2,
 			y: this.height * percent,
+			index: index,
 		});
 		this.birds.push(b)
-
-		Render.addHuman(index);
 	}
 	this.generation++;
 	this.alives = this.birds.length;

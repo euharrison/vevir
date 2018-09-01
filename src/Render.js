@@ -11,8 +11,6 @@ var camera, scene, renderer, stats;
 
 class Render {
   constructor() {
-    this.humans = [];
-
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 20000 );
     camera.position.y = 200;
     camera.position.z = 1 * 800;
@@ -63,19 +61,13 @@ class Render {
   }
 
   render() {
-    for (let i = 0; i < this.humans.length; i++) {
-      this.humans[i].update();
-    }
-
     renderer.render( scene, camera );
   }
 
-  addHuman(index) {
-    const human = new Human();
+  addHuman(human, index) {
     human.rotation.y = 90 * Math.PI/180;
     human.position.x = -200;
     human.position.z = -300 * index;
-    this.humans.push(human);
     scene.add(human);
   }
 }
