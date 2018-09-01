@@ -143,12 +143,15 @@ Game.prototype.start = function(){
 
 	this.gen = Neuvol.nextGeneration();
 	for(var i in this.gen){
-		var percent = Number(i)/this.gen.length;
+		const index = Number(i);
+		var percent = index/this.gen.length;
 		var b = new Bird({
 			x: this.width * 0.2,
 			y: this.height * percent,
 		});
 		this.birds.push(b)
+
+		Render.addHuman(index);
 	}
 	this.generation++;
 	this.alives = this.birds.length;
@@ -183,7 +186,7 @@ Game.prototype.update = function(){
 					this.nextFood.id,
 					Math.floor(this.birds[i].weight/10),
 				];
-				console.log(inputs)
+				// console.log(inputs)
 				var res = this.gen[i].compute(inputs);
 				var fed = res > 0.5;
 				this.birds[i].checkFood(this.nextFood, fed);
@@ -299,7 +302,7 @@ window.onload = function(){
 
 	var start = function(){
 		Neuvol = new Neuroevolution({
-			population:10,
+			population: 10,
 			network:[2, [2], 1],
 		});
 		game = new Game();

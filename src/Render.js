@@ -9,83 +9,75 @@ if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 var camera, scene, renderer, stats;
 
-const humans = [];
+class Render {
+  constructor() {
+    this.humans = [];
 
-init();
-animate();
+    camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 20000 );
+    camera.position.y = 200;
+    camera.position.z = 1 * 800;
 
-function init() {
+    scene = new THREE.Scene();
 
-  camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 20000 );
-  camera.position.y = 200;
-  camera.position.z = 1 * 800;
+    var light;
 
-  scene = new THREE.Scene();
+    var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
+    scene.add( ambientLight );
 
-  var light;
+    var pointLight = new THREE.PointLight( 0xffffff, 0.8 );
+    camera.add( pointLight );
+    scene.add( camera );
 
-  var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
-  scene.add( ambientLight );
+    camera.lookAt( scene.position );
 
-  var pointLight = new THREE.PointLight( 0xffffff, 0.8 );
-  camera.add( pointLight );
-  scene.add( camera );
+    //
 
-  camera.lookAt( scene.position );
+    renderer = new THREE.WebGLRenderer( { antialias: true } );
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
 
-  //
+    stats = new Stats();
+    document.body.appendChild( stats.dom );
 
-  const totalHumans = 10;
+    //
 
-  for (let i = 0; i < totalHumans; i++) {
+    window.addEventListener( 'resize', this.onWindowResize, false );
+
+    this.animate = this.animate.bind(this);
+    this.animate();
+  }
+
+  onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+  }
+
+  animate() {
+    requestAnimationFrame(this.animate);
+
+    this.render();
+    stats.update();
+  }
+
+  render() {
+    for (let i = 0; i < this.humans.length; i++) {
+      this.humans[i].update();
+    }
+
+    renderer.render( scene, camera );
+  }
+
+  addHuman(index) {
     const human = new Human();
     human.rotation.y = 90 * Math.PI/180;
     human.position.x = -200;
-    human.position.z = -300 * i;
-    humans.push(human);
+    human.position.z = -300 * index;
+    this.humans.push(human);
     scene.add(human);
   }
-
-  //
-
-  renderer = new THREE.WebGLRenderer( { antialias: true } );
-  renderer.setPixelRatio( window.devicePixelRatio );
-  renderer.setSize( window.innerWidth, window.innerHeight );
-  document.body.appendChild( renderer.domElement );
-
-  stats = new Stats();
-  document.body.appendChild( stats.dom );
-
-  //
-
-  window.addEventListener( 'resize', onWindowResize, false );
-
 }
 
-function onWindowResize() {
-
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize( window.innerWidth, window.innerHeight );
-
-}
-
-//
-
-function animate() {
-
-  requestAnimationFrame( animate );
-
-  render();
-  stats.update();
-
-}
-
-function render() {
-  for (let i = 0; i < humans.length; i++) {
-    humans[i].update();
-  }
-
-  renderer.render( scene, camera );
-}
+export default new Render();
