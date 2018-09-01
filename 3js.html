@@ -39,29 +39,11 @@
 
 		<script>
 
-			function generateTexture() {
-				var canvas = document.createElement( 'canvas' );
-				canvas.width = 256;
-				canvas.height = 256;
-				var context = canvas.getContext( '2d' );
-				var image = context.getImageData( 0, 0, 256, 256 );
-				var x = 0, y = 0;
-				for ( var i = 0, j = 0, l = image.data.length; i < l; i += 4, j ++ ) {
-					x = j % 256;
-					y = x == 0 ? y + 1 : y;
-					image.data[ i ] = 255;
-					image.data[ i + 1 ] = 255;
-					image.data[ i + 2 ] = 255;
-					image.data[ i + 3 ] = Math.floor( x ^ y );
-				}
-				context.putImageData( image, 0, 0 );
-				return canvas;
-			}
-
-
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 			var camera, scene, renderer, stats;
+
+			var human, mouth;
 
 			init();
 			animate();
@@ -70,10 +52,11 @@
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
 				camera.position.y = 400;
+				camera.position.z = 1 * 800;
 
 				scene = new THREE.Scene();
 
-				var light, object;
+				var light;
 
 				var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
 				scene.add( ambientLight );
@@ -82,21 +65,84 @@
 				camera.add( pointLight );
 				scene.add( camera );
 
+				camera.lookAt( scene.position );
+
 				//
 
+				const humanHue = Math.random() * 255;
+
 				var material = new THREE.MeshPhongMaterial( { 
-					color: 0xffffff, 
-					specular: 0x009900,
+					color: new THREE.Color(`hsl(${humanHue}, 100%, 50%)`),
 					shininess: 30,
 					flatShading: true,
-					// emissive: 0xff0000
 				} );
 
 				//
 
-				object = new THREE.Mesh( new THREE.SphereBufferGeometry( 75, 20, 10 ), material );
-				object.position.set( -300, 0, 200 );
-				scene.add( object );
+				head = new THREE.Mesh( new THREE.SphereBufferGeometry( 100, 10, 7 ), material );
+				// obheadject.position.set( -300, 0, 200 );
+				scene.add( head );
+
+				var eyeMaterial = new THREE.MeshPhongMaterial( { 
+					color: 0xffffff,
+					shininess: 30,
+					flatShading: true,
+				} );
+
+				const eyeLeft = new THREE.Mesh( new THREE.SphereBufferGeometry( 40, 10, 7 ), eyeMaterial );
+				eyeLeft.rotation.x = Math.PI/2;
+				eyeLeft.position.set( -35, 25, 70 );
+
+				const eyeRight = new THREE.Mesh( new THREE.SphereBufferGeometry( 40, 10, 7 ), eyeMaterial );
+				eyeRight.rotation.x = Math.PI/2;
+				eyeRight.position.set( 35, 25, 70 );
+
+				var eyeDotMaterial = new THREE.MeshPhongMaterial( { 
+					color: 0x000000,
+					shininess: 30,
+					flatShading: true,
+				} );
+
+				const eyeLeftDot = new THREE.Mesh( new THREE.SphereBufferGeometry( 11, 10, 7 ), eyeDotMaterial );
+				eyeLeftDot.rotation.x = Math.PI/2;
+				eyeLeftDot.position.set( -35, 25, 100 );
+
+				const eyeRightDot = new THREE.Mesh( new THREE.SphereBufferGeometry( 11, 10, 7 ), eyeDotMaterial );
+				eyeRightDot.rotation.x = Math.PI/2;
+				eyeRightDot.position.set( 35, 25, 100 );
+
+				var sickEyeMaterial = new THREE.MeshPhongMaterial( { 
+					color: 0xff0000,
+					shininess: 30,
+					flatShading: true,
+				} );
+
+				const sickEye = new THREE.Mesh( new THREE.SphereBufferGeometry( 40, 10, 7 ), sickEyeMaterial );
+				sickEye.position.set( 35, 25, 70 );
+
+				var mouthMaterial = new THREE.MeshPhongMaterial( { 
+					color: new THREE.Color(`hsl(${humanHue}, 50%, 50%)`),
+					shininess: 30,
+					flatShading: true,
+				} );
+
+				// radio espessura segmentos-no-tubo
+				mouth = new THREE.Mesh( new THREE.TorusBufferGeometry( 20, 10, 10, 10 ), mouthMaterial );
+				mouth.rotation.x = 30 * Math.PI/180;
+				mouth.position.set( 0, -45, 82 );
+
+				human = new THREE.Group();
+				human.add( head );
+				human.add( eyeLeft );
+				human.add( eyeRight );
+				human.add( eyeLeftDot );
+				human.add( eyeRightDot );
+				// human.add( sickEye );
+				human.add( mouth );
+				scene.add( human );
+
+				// human.rotation.y = 0;
+				// human.rotation.y = Math.PI/2 /2;
 
 				//
 
@@ -137,25 +183,17 @@
 			function render() {
 
 				var timer = Date.now() * 0.0001;
+				human.rotation.y = timer * 2.5;
 
-				camera.position.x = Math.cos( timer ) * 800;
-				camera.position.z = Math.sin( timer ) * 800;
-
-				camera.lookAt( scene.position );
-
-				scene.traverse( function( object ) {
-
-					if ( object.isMesh === true ) {
-
-						object.rotation.x = timer * 5;
-						object.rotation.y = timer * 2.5;
-
-					}
-
-				} );
+				var timerMouth = Date.now() * 0.01;
+				mouth.scale.y = MathMap(Math.sin(timerMouth), -1, 1, 0.5, 1);
 
 				renderer.render( scene, camera );
 
+			}
+
+			function MathMap(x, in_min, in_max, out_min, out_max) {
+				return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 			}
 
 		</script>
