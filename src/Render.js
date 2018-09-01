@@ -9,15 +9,15 @@ if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 var camera, scene, renderer, stats;
 
-var human, mouth;
+const humans = [];
 
 init();
 animate();
 
 function init() {
 
-  camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-  camera.position.y = 400;
+  camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 20000 );
+  camera.position.y = 200;
   camera.position.z = 1 * 800;
 
   scene = new THREE.Scene();
@@ -35,17 +35,16 @@ function init() {
 
   //
 
-  const human = new Human();
-  console.log(human)
-  scene.add( human );
-  // scene.add( human.getHuman() );
+  const totalHumans = 10;
 
-  const human2 = new Human();
-  human2.position.x = 200;
-  scene.add( human2 );
-
-  // human.rotation.y = 0;
-  // human.rotation.y = Math.PI/2 /2;
+  for (let i = 0; i < totalHumans; i++) {
+    const human = new Human();
+    human.rotation.y = 90 * Math.PI/180;
+    human.position.x = -200;
+    human.position.z = -300 * i;
+    humans.push(human);
+    scene.add(human);
+  }
 
   //
 
@@ -84,17 +83,9 @@ function animate() {
 }
 
 function render() {
-
-  var timer = Date.now() * 0.0001;
-  // human.rotation.y = timer * 2.5;
-
-  var timerMouth = Date.now() * 0.01;
-  // mouth.scale.y = MathMap(Math.sin(timerMouth), -1, 1, 0.5, 1);
+  for (let i = 0; i < humans.length; i++) {
+    humans[i].update();
+  }
 
   renderer.render( scene, camera );
-
-}
-
-function MathMap(x, in_min, in_max, out_min, out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

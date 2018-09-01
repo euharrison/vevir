@@ -74,12 +74,12 @@ class Human extends THREE.Group {
 
   update() {
     var timerMouth = Date.now() * 0.01;
-    // this.mouth.scale.y = MathMap(Math.sin(timerMouth), -1, 1, 0.5, 1);
+    this.mouth.scale.y = MathMap(Math.sin(timerMouth), -1, 1, 0.5, 1);
   }
 }
 
 export default Human;
 
-// function MathMap(x, in_min, in_max, out_min, out_max) {
-//   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-// }
+function MathMap(x, in_min, in_max, out_min, out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
