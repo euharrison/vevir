@@ -12,6 +12,7 @@
     "animejs": "^2.2.0",
     "babel-polyfill": "^6.26.0",
     "jquery": "^3.3.1",
+    "phaser-ce": "^2.10.0",
     "three": "^0.96.0"
   },
   "devDependencies": {

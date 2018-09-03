@@ -1,6 +1,7 @@
 import Render from './Render';
 import Human from './Human';
 import AudioController from './AudioController';
+import PhaserGame from './PhaserGame';
 
 (function() {
 	var timeouts = [];
