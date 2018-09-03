@@ -1,5 +1,6 @@
 import Render from './Render';
 import Human from './Human';
+import AudioController from './AudioController';
 
 (function() {
 	var timeouts = [];
