@@ -10,25 +10,19 @@ var cursors;
 var jumpButton;
 var bg;
 
-
-var map;
-var layer;
-
 var walls;
 var coins;
 var enemies;
 
 function preload() {
+  game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+
   game.load.spritesheet('dude', 'assets/images/dude.png', 32, 48);
   game.load.image('background', 'assets/images/background2.png');
 
   game.load.image('wall', 'img/wall.png');
   game.load.image('coin', 'img/bird.png');
   game.load.image('enemy', 'img/enemy.png');
-
-
-  game.load.tilemap('level1', 'assets/games/starstruck/level1.json', null, Phaser.Tilemap.TILED_JSON);
-  game.load.image('tiles-1', 'assets/games/starstruck/tiles-1.png');
 }
 
 function create() {
@@ -39,7 +33,6 @@ function create() {
   player = game.add.sprite(32, 320, 'dude');
   game.physics.enable(player, Phaser.Physics.ARCADE);
 
-  player.body.collideWorldBounds = true;
   player.body.gravity.y = 1000;
   player.body.maxVelocity.y = 500;
   player.body.setSize(20, 32, 5, 16);
@@ -55,103 +48,90 @@ function create() {
   coins = game.add.group();
   enemies = game.add.group();
 
-
-    //  Creates a blank tilemap
-    map = game.add.tilemap();
-
-    //  Add a Tileset image to the map
-    map.addTilesetImage('wall');
-
-    //  Creates a new blank layer and sets the map dimensions.
-    //  In this case the map is 40x30 tiles in size and the tiles are 32x32 pixels in size.
-    layer = map.create('level1', 40, 30, 32, 32);
-    layer.scrollFactorX = 0.5;
-    layer.scrollFactorY = 0.5;
-
-    //  Resize the world
-    layer.resizeWorld();
-
-    console.log(layer.getTileX(40))
-
-    map.putTile(60, 
-      1,
-      1, 
-      layer);
-
-
-    //  Un-comment this on to see the collision tiles
-    // layer.debug = true;
-
-    // layer.resizeWorld();
-
-
-  createLevel();
+  const input = [1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10];
+  createLevel(input);
 }
 
-function createLevel() {
-  // Design the level. x = wall, o = coin, ! = lava.
-  var level = [
-      'xxxxxxxxxxxxxxxxxxxxxx',
-      '          !          x',
-      '                  o  x',
-      '                  o  x',
-      '                  o  x',
-      '                  o  x',
-      '                  o  x',
-      '                  o  x',
-      '                  o  x',
-      '                  o  x',
-      '                  o  x',
-      '                  o  x',
-      '                  o  x',
-      '                  o  x',
-      '                  o  x',
-      '          o          x',
-      '                     x',
-      'xxx   o   !    x     x',
-      'xxxxxxxxxxxxxxxx!!!!!x',
-  ];
+function createLevel(input) {
+  const level = [];
 
-  const initalX = -20;
-  const tileWidth = 20;
-  const tileHeight = 40;
+  const resolution = 50;
+  const verticalLength = input.reduce((result, i) => Math.max(result, i)) + 1; // always left at least one blank space
+  const horizontalLength = input.length;
 
-  // Create the level by going through the array
-  for (var i = 0; i < level.length; i++) {
-    for (var j = 0; j < level[i].length; j++) {
-
-      // Create a wall and add it to the 'walls' group
-      if (level[i][j] == 'x') {
-        // var wall = game.add.sprite(30+tileWidth*j, 30+tileHeight*i, 'wall');
-        // walls.add(wall);
-        // game.physics.arcade.enable(wall);
-        // wall.body.immovable = true;
-
-        var tilesprite = game.add.tileSprite(30+tileWidth*j, 30+tileHeight*i, tileWidth, tileHeight, 'wall');
-        walls.add(tilesprite);
-        game.physics.arcade.enable(tilesprite);
-        // game.physics.enable([ ball, tilesprite ], Phaser.Physics.ARCADE);
-
-        // ball.body.collideWorldBounds = true;
-        // ball.body.bounce.set(1);
-
-        // tilesprite.body.collideWorldBounds = true;
-        tilesprite.body.immovable = true;
-        tilesprite.body.allowGravity = false;
+  for (var y = 0; y < verticalLength; y++) {
+    level[y] = [];
+    for (var x = 0; x < horizontalLength; x++) {
+      if (x === 0 || x === horizontalLength - 1) {
+        level[y][x] = ' ';
       }
-
-      // Create a coin and add it to the 'coins' group
-      else if (level[i][j] == 'o') {
-        var coin = game.add.sprite(30+tileWidth*j, 30+tileHeight*i, 'coin');
-        coins.add(coin);
-        game.physics.arcade.enable(coin);
+      else if (y > verticalLength - input[x]) {
+        level[y][x] = 'x';
       }
+      else if (y === verticalLength - 1) {
+        level[y][x] = 'x';
+      }
+      else {
+        level[y][x] = ' ';
+      }
+    }
+  }
 
-      // Create a enemy and add it to the 'enemies' group
-      else if (level[i][j] == '!') {
-        var enemy = game.add.sprite(30+tileWidth*j, 30+tileHeight*i, 'enemy');
-        enemies.add(enemy);
-        game.physics.arcade.enable(enemy);
+  createLevelSprites(level);
+
+  /*
+  // Level sample
+  // x = wall, o = coin, ! = lava.
+  createLevelSprites([
+    'xxxxxxxxxxxxxxxxxxxxxx',
+    '          !          x',
+    '                  o  x',
+    '                  o  x',
+    '                  o  x',
+    '          o          x',
+    '          o          x',
+    '                     x',
+    'xxx   o   !    x     x',
+    'xxxxxxxxxxxxxxxx!!!!!x',
+  ]);
+  //*/
+}
+
+function createLevelSprites(level) {
+  const horizontalLength = level[0].length;
+  const verticalLength = level.length;
+
+  const tileWidth = game.width / horizontalLength;
+  const tileHeight = game.height / verticalLength;
+
+  for (var y = 0; y < verticalLength; y++) {
+    for (var x = 0; x < horizontalLength; x++) {
+      switch (level[y][x]) {
+
+        // wall
+        case 'x':
+          const wall = game.add.sprite(tileWidth * x, tileHeight * y, 'wall');
+          wall.width = tileWidth;
+          wall.height = tileHeight;
+          walls.add(wall);
+          game.physics.arcade.enable(wall);
+          wall.body.immovable = true;
+          wall.body.allowGravity = false;
+          break;
+
+        // coin
+        case 'o':
+          const coin = game.add.sprite(tileWidth * x, tileHeight * y, 'coin');
+          coins.add(coin);
+          game.physics.arcade.enable(coin);
+          break;
+
+        // enemy
+        case '!':
+          const enemy = game.add.sprite(tileWidth * x, tileHeight * y, 'enemy');
+          enemies.add(enemy);
+          game.physics.arcade.enable(enemy);
+          break;
       }
     }
   }
