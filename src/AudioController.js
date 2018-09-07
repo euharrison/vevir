@@ -11,7 +11,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
   navigator.mediaDevices.getUserMedia = function(constraints) {
 
     // First get ahold of the legacy getUserMedia, if present
-    var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+    const getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
     // Some browsers just don't implement it - return a rejected promise with an error
     // to keep a consistent interface
@@ -27,57 +27,68 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
 }
 
 
-var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-var source;
-var stream;
+const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+let source;
+let stream;
 
-var analyser = audioCtx.createAnalyser();
+const analyser = audioCtx.createAnalyser();
 analyser.minDecibels = -90;
 analyser.maxDecibels = -10;
 analyser.smoothingTimeConstant = 0.85;
 
-var volume = 0;
+let spectrogram = [];
+let maxVolumeFound = 0;
 
 if (navigator.mediaDevices.getUserMedia) {
-   console.log('getUserMedia supported.');
-   var constraints = {audio: true}
-   navigator.mediaDevices.getUserMedia (constraints)
+   const constraints = {audio: true}
+   navigator.mediaDevices.getUserMedia(constraints)
       .then(
         function(stream) {
           source = audioCtx.createMediaStreamSource(stream);
           source.connect(analyser);
           
-          analyser.fftSize = 256;
-          var bufferLength = analyser.frequencyBinCount;
-          var dataArray = new Uint8Array(bufferLength);
+          // analyser.fftSize = 256 * 16;
+          analyser.fftSize = 256 / 8;
+          const bufferLength = analyser.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
 
           function draw() {
             requestAnimationFrame(draw);
 
             analyser.getByteFrequencyData(dataArray);
 
-            var averageVolume = 0;
-            var humanBufferLength = bufferLength / 2.5; // magic number
-            for (var i = 0; i < humanBufferLength; i++) {
-              averageVolume += dataArray[i];
-            }
-            averageVolume /= humanBufferLength;
+            // const humanCommonVoiceFrequency = 2.5; // magic number
+            const humanCommonVoiceFrequency = 1; // magic number
+            const humanBufferLength = bufferLength / humanCommonVoiceFrequency;
 
-            var normalizedVolume = Math.max(0, Math.min(1, averageVolume / bufferLength));
-            volume = normalizedVolume;
+            spectrogram = [];
+            for (var i = 0; i < humanBufferLength; i++) {
+              spectrogram.push(dataArray[i]);
+            }
           }
 
           draw();
       })
-      .catch( function(err) { console.log('The following gUM error occured: ' + err);})
+      .catch( function(err) { console.error('The following gUM error occured: ' + err);})
 } else {
-   console.log('getUserMedia not supported on your browser!');
+   console.error('getUserMedia not supported on your browser!');
+}
+
+function getSpectrogram() {
+  return spectrogram;
 }
 
 function getVolume() {
-  return volume;
+  const sumVolume = spectrogram.reduce((result, value) => result + value);
+  const volume = sumVolume / spectrogram.length;
+
+  maxVolumeFound = Math.max(maxVolumeFound, volume);
+  const normalizedVolume = Math.max(0, Math.min(1, volume / maxVolumeFound));
+
+  return normalizedVolume;
 }
 
 export default {
+  getSpectrogram,
   getVolume,
 }

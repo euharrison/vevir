@@ -1,3 +1,5 @@
+import * as d3 from "d3";
+
 var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'phaser-example');
 
 game.state.add('main', { preload: preload, create: create, update: update, render: render });  
@@ -13,6 +15,8 @@ var bg;
 var walls;
 var coins;
 var enemies;
+
+let input = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 0, 0, 0, 0, 0];
 
 function preload() {
   game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -48,34 +52,58 @@ function create() {
   coins = game.add.group();
   enemies = game.add.group();
 
-  const input = [1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10];
-  createLevel(input);
+  createLevel();
 }
 
-function createLevel(input) {
+function createLevel() {
   const level = [];
 
-  const resolution = 50;
-  const verticalLength = input.reduce((result, i) => Math.max(result, i)) + 1; // always left at least one blank space
+  const verticalLength = 20;
   const horizontalLength = input.length;
+
+  const maxInput = input.reduce((result, i) => Math.max(result, i))
+
+  const scaleVertical = d3.scaleLinear()
+    .domain([0, maxInput])
+    .range([0, verticalLength - 1])
+
+  const scaleHorizontal = d3.scaleLinear()
+    .domain([0, input.length])
+    .range([0, horizontalLength])
+
+  const scaledInput = input.map(i => scaleVertical(i));
+
+console.log(scaleVertical)
+console.log(input)
+console.log(maxInput)
+console.log(    999, input.map(i => scaleVertical(i))   )
+
+const emptyArray = new Array(horizontalLength).fill(0);
+// console.log(    888, emptyArray.map((i, index) => scaleHorizontal(index))  )
+// console.log(    999, new Array(horizontalLength).map(i => scaleHorizontal(i)    )   )
+
+  // const 
+
+  // const verticalLength = input.reduce((result, i) => Math.max(result, i)) + 5; // always left few blank above
+  // const horizontalLength = input.length;
 
   for (var y = 0; y < verticalLength; y++) {
     level[y] = [];
     for (var x = 0; x < horizontalLength; x++) {
-      if (x === 0 || x === horizontalLength - 1) {
-        level[y][x] = ' ';
-      }
-      else if (y > verticalLength - input[x]) {
+      if (y > verticalLength - scaledInput[x] - 1) {
         level[y][x] = 'x';
       }
       else if (y === verticalLength - 1) {
-        level[y][x] = 'x';
+        level[y][x] = ' ';
       }
       else {
         level[y][x] = ' ';
       }
     }
   }
+
+  // debug
+  level.forEach(row => console.log(`|${row.join('')}| ${Math.random()}`))
 
   createLevelSprites(level);
 
@@ -86,9 +114,6 @@ function createLevel(input) {
     'xxxxxxxxxxxxxxxxxxxxxx',
     '          !          x',
     '                  o  x',
-    '                  o  x',
-    '                  o  x',
-    '          o          x',
     '          o          x',
     '                     x',
     'xxx   o   !    x     x',
@@ -192,8 +217,8 @@ function takeCoin (player, coin) {
   coin.kill();
 }
 
-function restart(player, enemy) {
-  // console.log('restart', player, enemy)
+function restart(_input) {
+  input = _input;
   game.state.start('main');
 }
 
