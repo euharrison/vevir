@@ -1,6 +1,14 @@
 import * as d3 from "d3";
 
-var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'phaser-example');
+const devMode = true;
+
+const gameWidth = 1920/2;
+const gameHeight = 1080/2;
+
+const worldWidth = devMode ? gameWidth : gameWidth * 4;
+const worldHeight = gameHeight;
+
+var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'phaser');
 
 game.state.add('main', { preload: preload, create: create, update: update, render: render });  
 game.state.start('main');
@@ -30,12 +38,14 @@ function preload() {
 }
 
 function create() {
+  game.world.setBounds(0, 0, worldWidth, worldHeight);
+
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
   bg = game.add.tileSprite(0, 0, game.width, game.height, 'background');
 
-  player = game.add.sprite(32, 320, 'dude');
-  game.physics.enable(player, Phaser.Physics.ARCADE);
+  player = game.add.sprite(32, 100, 'dude');
+  game.physics.arcade.enable(player);
 
   player.body.gravity.y = 1000;
   player.body.maxVelocity.y = 500;
@@ -48,6 +58,8 @@ function create() {
   cursors = game.input.keyboard.createCursorKeys();
   jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
+  game.camera.follow(player);
+
   walls = game.add.group();
   coins = game.add.group();
   enemies = game.add.group();
@@ -59,51 +71,49 @@ function createLevel() {
   const level = [];
 
   const verticalLength = 20;
-  const horizontalLength = input.length;
+  const horizontalLength = 100;
 
-  const maxInput = input.reduce((result, i) => Math.max(result, i))
+  const maxInput = input.reduce((result, i) => Math.max(result, i));
+  const maxFloorHeight = verticalLength / 2;
 
   const scaleVertical = d3.scaleLinear()
     .domain([0, maxInput])
-    .range([0, verticalLength - 1])
-
-  const scaleHorizontal = d3.scaleLinear()
-    .domain([0, input.length])
-    .range([0, horizontalLength])
+    .range([0, maxFloorHeight])
 
   const scaledInput = input.map(i => scaleVertical(i));
 
-console.log(scaleVertical)
-console.log(input)
-console.log(maxInput)
-console.log(    999, input.map(i => scaleVertical(i))   )
+  const scaleHorizontalIndex = d3.scaleLinear()
+    .domain([0, scaledInput.length])
+    .range([0, horizontalLength])
 
-const emptyArray = new Array(horizontalLength).fill(0);
-// console.log(    888, emptyArray.map((i, index) => scaleHorizontal(index))  )
-// console.log(    999, new Array(horizontalLength).map(i => scaleHorizontal(i)    )   )
+  const domainHorizontal = new Array(scaledInput.length).fill(0).map((v, index) => scaleHorizontalIndex(index));
+  const scaleHorizontalValue = d3.scaleLinear()
+    .domain(domainHorizontal)
+    .range(scaledInput)
 
-  // const 
-
-  // const verticalLength = input.reduce((result, i) => Math.max(result, i)) + 5; // always left few blank above
-  // const horizontalLength = input.length;
+  const horizontalValues = new Array(horizontalLength).fill(0).map((v, index) => scaleHorizontalValue(index))
 
   for (var y = 0; y < verticalLength; y++) {
     level[y] = [];
     for (var x = 0; x < horizontalLength; x++) {
-      if (y > verticalLength - scaledInput[x] - 1) {
+      if (y > verticalLength - horizontalValues[x] - 1) {
         level[y][x] = 'x';
       }
-      else if (y === verticalLength - 1) {
-        level[y][x] = ' ';
+      else if (y > verticalLength - horizontalValues[x] - 2) {
+        level[y][x] = Math.random() < 0.05 ? '!' : ' ';
+      }
+      else if (y > verticalLength - horizontalValues[x] - 3) {
+        level[y][x] = Math.random() < 0.1 ? 'o' : ' ';
       }
       else {
-        level[y][x] = ' ';
+        level[y][x] = ' ';//'o';
       }
     }
   }
 
   // debug
-  level.forEach(row => console.log(`|${row.join('')}| ${Math.random()}`))
+  console.log(input)
+  console.log(level.map(row => `|${row.join('')}|`).join('\n'));
 
   createLevelSprites(level);
 
@@ -126,8 +136,8 @@ function createLevelSprites(level) {
   const horizontalLength = level[0].length;
   const verticalLength = level.length;
 
-  const tileWidth = game.width / horizontalLength;
-  const tileHeight = game.height / verticalLength;
+  const tileWidth = game.world.width / horizontalLength;
+  const tileHeight = game.world.height / verticalLength;
 
   for (var y = 0; y < verticalLength; y++) {
     for (var x = 0; x < horizontalLength; x++) {
@@ -206,22 +216,32 @@ function update() {
   }
 }
 
-function render () {
-  // game.debug.text(game.time.physicsElapsed, 32, 32);
-  // game.debug.body(player);
-  game.debug.bodyInfo(player, 16, 24);
+function render() {
+  if (devMode) {
+    // game.debug.text(game.time.physicsElapsed, 32, 32);
+    // game.debug.body(player);
+    // game.debug.bodyInfo(player, 16, 24);
+
+    game.debug.cameraInfo(game.camera, 32, 32);
+    game.debug.spriteCoords(player, 32, 500);
+  }
 }
 
-function takeCoin (player, coin) {
+function takeCoin(player, coin) {
   // console.log('takeCoin', player, coin)
   coin.kill();
 }
 
-function restart(_input) {
-  input = _input;
+function restart() {
   game.state.start('main');
+}
+
+function updateLevel(_input) {
+  input = _input;
+  restart();
 }
 
 export default {
   restart,
+  updateLevel,
 }

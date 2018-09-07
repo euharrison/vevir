@@ -47,8 +47,7 @@ if (navigator.mediaDevices.getUserMedia) {
           source = audioCtx.createMediaStreamSource(stream);
           source.connect(analyser);
           
-          // analyser.fftSize = 256 * 16;
-          analyser.fftSize = 256 / 8;
+          analyser.fftSize = 256 * 16;
           const bufferLength = analyser.frequencyBinCount;
           const dataArray = new Uint8Array(bufferLength);
 

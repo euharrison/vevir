@@ -12,8 +12,12 @@ function onKeyPress(e) {
   switch(e.key) {
     case 'r':
     case 'R':
+      PhaserGame.restart();
+      break;
+    case 'u':
+    case 'U':
       const spectrogram = AudioController.getSpectrogram();
-      PhaserGame.restart(spectrogram);
+      PhaserGame.updateLevel(spectrogram);
       break;
   }
 }
