@@ -1,20 +1,23 @@
-class Player {
+class Player extends Phaser.Sprite {
   constructor(game, index) {
-    const player = game.add.sprite((index === 4 ? 400 : Math.random()*100), 100, 'dude');
-    game.physics.arcade.enable(player);
+    super(game, (index === 4 ? 400 : Math.random()*100), 100, 'player');
 
-    player.body.gravity.y = 1000;
-    player.body.maxVelocity.y = 500;
-    player.body.setSize(20, 32, 5, 16); 
+    game.physics.arcade.enable(this);
 
-    player.animations.add('left', [0, 1, 2, 3], 10, true);
-    player.animations.add('turn', [4], 20, true);
-    player.animations.add('right', [5, 6, 7, 8], 10, true);
+    this.body.gravity.y = 1000;
+    this.body.maxVelocity.y = 500;
+    this.body.setSize(20, 32, 5, 16);
 
-    player.index = index;
-    player.score = 0;
+    this.animations.add('left', [0, 1, 2, 3], 10, true);
+    this.animations.add('turn', [4], 20, true);
+    this.animations.add('right', [5, 6, 7, 8], 10, true);
 
-    return player;
+    this.index = index;
+    this.score = 0;
+  }
+
+  update() {
+    // if (this.alive) console.log('update', this.index)
   }
 }
 

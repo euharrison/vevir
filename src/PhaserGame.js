@@ -20,19 +20,14 @@ const game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'phaser');
 game.state.add('main', { preload: preload, create: create, update: update, render: render });  
 game.state.start('main');
 
-game.desiredFps = 2;
-
-let players = [];
+let players;
 let firstPlayer;
+
 let facing = 'left';
 let jumpTimer = 0;
 let cursors;
 let jumpButton;
 let bg;
-
-let walls;
-let coins;
-let enemies;
 
 let input = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 0, 0, 0, 0, 0];
 
@@ -43,7 +38,7 @@ let level;
 function preload() {
   game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
-  game.load.spritesheet('dude', 'assets/images/dude.png', 32, 48);
+  game.load.spritesheet('player', 'assets/images/dude.png', 32, 48);
   game.load.image('background', 'assets/images/background2.png');
 
   game.load.image('wall', 'img/wall.png');
@@ -58,34 +53,33 @@ function create() {
 
   bg = game.add.tileSprite(0, 0, game.width, game.height, 'background');
 
-  players = [];
+  players = game.add.group();
   for (let i = 0; i < totalPlayers; i++) {
     const player = new Player(game, i);
+    players.add(player);
 
     player.checkWorldBounds = true;
     player.events.onOutOfBounds.add(killPlayer, this);
-
-    players.push(player);
   }
 
   cursors = game.input.keyboard.createCursorKeys();
   jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-  walls = game.add.group();
-  coins = game.add.group();
-  enemies = game.add.group();
-
   level = new LevelGenerator(game);
-  level.create(input)
+  level.create(input);
 
   AI.nextGeneration();
 }
 
 function update() {
-  players.forEach(updatePlayer);
+  game.physics.arcade.collide(players, level.walls);
+  game.physics.arcade.overlap(players, level.coins, takeCoin, null, this);
+  game.physics.arcade.overlap(players, level.enemies, killPlayer, null, this);
+
+  players.children.forEach(updatePlayer);
 
   firstPlayer = null;
-  players.forEach(player => {
+  players.children.forEach(player => {
     if (!player.alive) return;
     if (!firstPlayer || player.x > firstPlayer.x) {
       firstPlayer = player;
@@ -100,10 +94,6 @@ function update() {
 }
 
 function updatePlayer(player) {
-  game.physics.arcade.collide(player, level.walls);
-  game.physics.arcade.overlap(player, level.coins, takeCoin, null, this);
-  game.physics.arcade.overlap(player, level.enemies, killPlayer, null, this);
-
   player.body.velocity.x = 0;
 
   if (cursors.left.isDown) {
@@ -176,7 +166,7 @@ function render() {
     game.debug.text(`Score: ${firstPlayer ? firstPlayer.score : 0}`, 20, 40);
     game.debug.text(`Max Score: ${maxScore}`, 20, 60);
     game.debug.text(`Generation: ${AI.generationAmount}`, 20, 80);
-    game.debug.text(`Alives: ${players.filter(p => p.alive).length}`, 20, 100);
+    game.debug.text(`Alives: ${players.children.filter(p => p.alive).length}`, 20, 100);
 
     if (firstPlayer) {
       // game.debug.body(firstPlayer);
@@ -189,9 +179,7 @@ function render() {
 function takeCoin(player, coin) {
   // console.log('takeCoin', player, coin)
   player.score++;
-
   maxScore = Math.max(maxScore, player.score);
-
   coin.kill();
 }
 
@@ -201,10 +189,8 @@ function killPlayer(player, coin) {
 }
 
 function restart() {
-  console.log('restart');
-
-  players.forEach(p => AI.setScore(p.index, p.score));
-
+  // console.log('restart');
+  players.children.forEach(p => AI.setScore(p.index, p.score));
   game.state.start('main');
 }
 
