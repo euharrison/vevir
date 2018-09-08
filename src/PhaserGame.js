@@ -1,11 +1,15 @@
 import * as d3 from "d3";
+import Player from "./Player";
 
 const devMode = true;
+
+const totalPlayers = 50;
 
 const gameWidth = 1920/2;
 const gameHeight = 1080/2;
 
-const worldWidth = devMode ? gameWidth : gameWidth * 4;
+// const worldWidth = gameWidth;
+const worldWidth = gameWidth * 2;
 const worldHeight = gameHeight;
 
 var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'phaser');
@@ -13,7 +17,8 @@ var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'phaser');
 game.state.add('main', { preload: preload, create: create, update: update, render: render });  
 game.state.start('main');
 
-var player;
+let players = [];
+let firstPlayer;
 var facing = 'left';
 var jumpTimer = 0;
 var cursors;
@@ -44,21 +49,18 @@ function create() {
 
   bg = game.add.tileSprite(0, 0, game.width, game.height, 'background');
 
-  player = game.add.sprite(32, 100, 'dude');
-  game.physics.arcade.enable(player);
+  players = [];
+  for (let i = 0; i < totalPlayers; i++) {
+    const player = new Player(game, i);
 
-  player.body.gravity.y = 1000;
-  player.body.maxVelocity.y = 500;
-  player.body.setSize(20, 32, 5, 16);
+    player.checkWorldBounds = true;
+    player.events.onOutOfBounds.add(killPlayer, this);
 
-  player.animations.add('left', [0, 1, 2, 3], 10, true);
-  player.animations.add('turn', [4], 20, true);
-  player.animations.add('right', [5, 6, 7, 8], 10, true);
+    players.push(player);
+  }
 
   cursors = game.input.keyboard.createCursorKeys();
   jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
-  game.camera.follow(player);
 
   walls = game.add.group();
   coins = game.add.group();
@@ -173,9 +175,27 @@ function createLevelSprites(level) {
 }
 
 function update() {
+  players.forEach(updatePlayer);
+
+  firstPlayer = null;
+  players.forEach(player => {
+    if (!player.alive) return;
+    if (!firstPlayer || player.x > firstPlayer.x) {
+      firstPlayer = player;
+    }
+  })
+
+  if (!firstPlayer) {
+    restart();
+  } else {
+    game.camera.follow(firstPlayer, undefined, 0.1, 0.1);
+  }
+}
+
+function updatePlayer(player) {    
   game.physics.arcade.collide(player, walls);
   game.physics.arcade.overlap(player, coins, takeCoin, null, this)
-  game.physics.arcade.overlap(player, enemies, restart, null, this);
+  game.physics.arcade.overlap(player, enemies, killPlayer, null, this);
 
   player.body.velocity.x = 0;
 
@@ -208,22 +228,26 @@ function update() {
       facing = 'idle';
     }
   }
-  
-  // if (jumpButton.isDown && player.body.onFloor() && game.time.now > jumpTimer) {
-  if (jumpButton.isDown && player.body.touching.down && game.time.now > jumpTimer) {
-    player.body.velocity.y = -500;
-    jumpTimer = game.time.now + 750;
+
+  if (firstPlayer && firstPlayer.index === player.index) {
+    // if (jumpButton.isDown && player.body.onFloor() && game.time.now > jumpTimer) {
+    if (jumpButton.isDown && player.body.touching.down && game.time.now > jumpTimer) {
+      player.body.velocity.y = -500;
+      jumpTimer = game.time.now + 750;
+    }
   }
 }
 
 function render() {
   if (devMode) {
     // game.debug.text(game.time.physicsElapsed, 32, 32);
-    // game.debug.body(player);
-    // game.debug.bodyInfo(player, 16, 24);
-
     game.debug.cameraInfo(game.camera, 32, 32);
-    game.debug.spriteCoords(player, 32, 500);
+
+    if (firstPlayer) {
+      // game.debug.body(firstPlayer);
+      // game.debug.bodyInfo(firstPlayer, 16, 24);
+      game.debug.spriteCoords(firstPlayer, 32, 500);
+    }
   }
 }
 
@@ -232,7 +256,13 @@ function takeCoin(player, coin) {
   coin.kill();
 }
 
+function killPlayer(player, coin) {
+  console.log('killPlayer', player, coin)
+  player.kill();
+}
+
 function restart() {
+  console.log('restart');
   game.state.start('main');
 }
 
