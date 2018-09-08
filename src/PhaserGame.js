@@ -1,9 +1,11 @@
 import * as d3 from "d3";
+
+import AI from './AI';
 import Player from "./Player";
 
 const devMode = true;
 
-const totalPlayers = 50;
+const totalPlayers = 10;
 
 const gameWidth = 1920/2;
 const gameHeight = 1080/2;
@@ -12,22 +14,24 @@ const gameHeight = 1080/2;
 const worldWidth = gameWidth * 2;
 const worldHeight = gameHeight;
 
-var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'phaser');
+const game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'phaser');
 
 game.state.add('main', { preload: preload, create: create, update: update, render: render });  
 game.state.start('main');
 
+game.desiredFps = 2;
+
 let players = [];
 let firstPlayer;
-var facing = 'left';
-var jumpTimer = 0;
-var cursors;
-var jumpButton;
-var bg;
+let facing = 'left';
+let jumpTimer = 0;
+let cursors;
+let jumpButton;
+let bg;
 
-var walls;
-var coins;
-var enemies;
+let walls;
+let coins;
+let enemies;
 
 let input = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 0, 0, 0, 0, 0];
 
@@ -67,6 +71,8 @@ function create() {
   enemies = game.add.group();
 
   createLevel();
+
+  AI.start();
 }
 
 function createLevel() {
@@ -114,8 +120,8 @@ function createLevel() {
   }
 
   // debug
-  console.log(input)
-  console.log(level.map(row => `|${row.join('')}|`).join('\n'));
+  // console.log(input)
+  // console.log(level.map(row => `|${row.join('')}|`).join('\n'));
 
   createLevelSprites(level);
 
@@ -235,30 +241,53 @@ function updatePlayer(player) {
       player.body.velocity.y = -500;
       jumpTimer = game.time.now + 750;
     }
+
+    // TODO transformar o gameState em class
+    // e passar para a AI processar usando qq variável
+    // possíveis variáveis:
+      // local da moeda mais próxima
+      // local do inimigo mais próximo
+      // relevo a frente e p tras
+      // olhar aquele link de ref
+    const inputs = [
+      player.position.x / game.world.width,
+      player.position.y / game.world.height,
+      // coins.children[0].position.x,
+      // coins.children[0].position.y,
+      // can jump
+    ];
+    const result = AI.process(inputs, player.index);
+    // console.log(result, player.index, inputs)
+  } else {
   }
 }
 
 function render() {
   if (devMode) {
-    // game.debug.text(game.time.physicsElapsed, 32, 32);
+    // game.debug.text(game.time.physicsElapsed, 20, 20);
     game.debug.cameraInfo(game.camera, 32, 32);
 
     if (firstPlayer) {
       // game.debug.body(firstPlayer);
-      // game.debug.bodyInfo(firstPlayer, 16, 24);
-      game.debug.spriteCoords(firstPlayer, 32, 500);
+      // game.debug.bodyInfo(firstPlayer, 20, 20);
+      game.debug.spriteCoords(firstPlayer, 20, 450);
+      game.debug.text(`Score: ${firstPlayer.score}`, 20, 500, 'yellow');
     }
   }
 }
 
 function takeCoin(player, coin) {
   // console.log('takeCoin', player, coin)
+  player.score++;
   coin.kill();
 }
 
 function killPlayer(player, coin) {
-  console.log('killPlayer', player, coin)
+  AI.setScore(player.score, player.index);
+
+  // console.log('killPlayer', player, coin)
   player.kill();
+
 }
 
 function restart() {

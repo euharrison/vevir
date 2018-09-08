@@ -1,6 +1,6 @@
 class Player {
   constructor(game, index) {
-    const player = game.add.sprite(32 + (index === 4 ? 400 : Math.random()*100), 100, 'dude');
+    const player = game.add.sprite((index === 4 ? 400 : Math.random()*100), 100, 'dude');
     game.physics.arcade.enable(player);
 
     player.body.gravity.y = 1000;
@@ -12,6 +12,7 @@ class Player {
     player.animations.add('right', [5, 6, 7, 8], 10, true);
 
     player.index = index;
+    player.score = 0;
 
     return player;
   }
