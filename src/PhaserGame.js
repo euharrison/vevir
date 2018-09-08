@@ -2,6 +2,7 @@ import * as d3 from "d3";
 
 import AI from './AI';
 import Player from "./Player";
+import LevelGenerator from "./LevelGenerator";
 
 const devMode = true;
 
@@ -36,6 +37,8 @@ let enemies;
 let input = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 0, 0, 0, 0, 0];
 
 let maxScore = 0;
+
+let level;
 
 function preload() {
   game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -72,114 +75,10 @@ function create() {
   coins = game.add.group();
   enemies = game.add.group();
 
-  createLevel();
+  level = new LevelGenerator(game);
+  level.create(input)
 
   AI.nextGeneration();
-}
-
-function createLevel() {
-  const level = [];
-
-  const verticalLength = 20;
-  const horizontalLength = 100;
-
-  const maxInput = input.reduce((result, i) => Math.max(result, i));
-  const maxFloorHeight = verticalLength / 2;
-
-  const scaleVertical = d3.scaleLinear()
-    .domain([0, maxInput])
-    .range([0, maxFloorHeight])
-
-  const scaledInput = input.map(i => scaleVertical(i));
-
-  const scaleHorizontalIndex = d3.scaleLinear()
-    .domain([0, scaledInput.length])
-    .range([0, horizontalLength])
-
-  const domainHorizontal = new Array(scaledInput.length).fill(0).map((v, index) => scaleHorizontalIndex(index));
-  const scaleHorizontalValue = d3.scaleLinear()
-    .domain(domainHorizontal)
-    .range(scaledInput)
-
-  const horizontalValues = new Array(horizontalLength).fill(0).map((v, index) => scaleHorizontalValue(index))
-
-  for (var y = 0; y < verticalLength; y++) {
-    level[y] = [];
-    for (var x = 0; x < horizontalLength; x++) {
-      if (y > verticalLength - horizontalValues[x] - 1) {
-        level[y][x] = 'x';
-      }
-      else if (y > verticalLength - horizontalValues[x] - 2) {
-        level[y][x] = Math.random() < 0.05 ? '!' : ' ';
-      }
-      else if (y > verticalLength - horizontalValues[x] - 3) {
-        level[y][x] = Math.random() < 0.1 ? 'o' : ' ';
-      }
-      else {
-        level[y][x] = ' ';//'o';
-      }
-    }
-  }
-
-  // debug
-  // console.log(input)
-  // console.log(level.map(row => `|${row.join('')}|`).join('\n'));
-
-  createLevelSprites(level);
-
-  /*
-  // Level sample
-  // x = wall, o = coin, ! = lava.
-  createLevelSprites([
-    'xxxxxxxxxxxxxxxxxxxxxx',
-    '          !          x',
-    '                  o  x',
-    '          o          x',
-    '                     x',
-    'xxx   o   !    x     x',
-    'xxxxxxxxxxxxxxxx!!!!!x',
-  ]);
-  //*/
-}
-
-function createLevelSprites(level) {
-  const horizontalLength = level[0].length;
-  const verticalLength = level.length;
-
-  const tileWidth = game.world.width / horizontalLength;
-  const tileHeight = game.world.height / verticalLength;
-
-  for (var y = 0; y < verticalLength; y++) {
-    for (var x = 0; x < horizontalLength; x++) {
-      switch (level[y][x]) {
-
-        // wall
-        case 'x':
-          const wall = game.add.sprite(tileWidth * x, tileHeight * y, 'wall');
-          wall.width = tileWidth;
-          wall.height = tileHeight;
-          walls.add(wall);
-          game.physics.arcade.enable(wall);
-          wall.body.immovable = true;
-          wall.body.allowGravity = false;
-          break;
-
-        // coin
-        case 'o':
-          const coin = game.add.sprite(tileWidth * x, tileHeight * y, 'coin');
-          coins.add(coin);
-          game.physics.arcade.enable(coin);
-          break;
-
-        // enemy
-        case '!':
-          const enemy = game.add.sprite(tileWidth * x, tileHeight * y, 'enemy');
-          enemies.add(enemy);
-          game.physics.arcade.enable(enemy);
-          break;
-      }
-    }
-  }
 }
 
 function update() {
@@ -201,9 +100,9 @@ function update() {
 }
 
 function updatePlayer(player) {
-  game.physics.arcade.collide(player, walls);
-  game.physics.arcade.overlap(player, coins, takeCoin, null, this);
-  game.physics.arcade.overlap(player, enemies, killPlayer, null, this);
+  game.physics.arcade.collide(player, level.walls);
+  game.physics.arcade.overlap(player, level.coins, takeCoin, null, this);
+  game.physics.arcade.overlap(player, level.enemies, killPlayer, null, this);
 
   player.body.velocity.x = 0;
 
