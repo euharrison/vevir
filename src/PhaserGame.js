@@ -11,195 +11,146 @@ const totalPlayers = 10;
 const gameWidth = 1920/2;
 const gameHeight = 1080/2;
 
-// const worldWidth = gameWidth;
-const worldWidth = gameWidth * 2;
+const worldWidth = gameWidth * 2; // * 4
 const worldHeight = gameHeight;
 
-const game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'phaser');
+class Play extends Phaser.State {
+  constructor() {
+    super();
+    this.key = 'play';
 
-game.state.add('main', { preload: preload, create: create, update: update, render: render });  
-game.state.start('main');
-
-let players;
-let firstPlayer;
-
-let facing = 'left';
-let jumpTimer = 0;
-let cursors;
-let jumpButton;
-let bg;
-
-let input = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 0, 0, 0, 0, 0];
-
-let maxScore = 0;
-
-let level;
-
-function preload() {
-  game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-
-  game.load.spritesheet('player', 'assets/images/dude.png', 32, 48);
-  game.load.image('background', 'assets/images/background2.png');
-
-  game.load.image('wall', 'img/wall.png');
-  game.load.image('coin', 'img/bird.png');
-  game.load.image('enemy', 'img/enemy.png');
-}
-
-function create() {
-  game.world.setBounds(0, 0, worldWidth, worldHeight);
-
-  game.physics.startSystem(Phaser.Physics.ARCADE);
-
-  bg = game.add.tileSprite(0, 0, game.width, game.height, 'background');
-
-  players = game.add.group();
-  for (let i = 0; i < totalPlayers; i++) {
-    const player = new Player(game, i);
-    players.add(player);
-
-    player.checkWorldBounds = true;
-    player.events.onOutOfBounds.add(killPlayer, this);
+    this.levelInput = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 0, 0, 0, 0, 0];
   }
 
-  cursors = game.input.keyboard.createCursorKeys();
-  jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  preload() {
+    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
-  level = new LevelGenerator(game);
-  level.create(input);
+    game.load.spritesheet('player', 'assets/images/dude.png', 32, 48);
+    game.load.image('background', 'assets/images/background2.png');
 
-  AI.nextGeneration();
-}
+    game.load.image('wall', 'img/wall.png');
+    game.load.image('coin', 'img/bird.png');
+    game.load.image('enemy', 'img/enemy.png');
+  }
 
-function update() {
-  game.physics.arcade.collide(players, level.walls);
-  game.physics.arcade.overlap(players, level.coins, takeCoin, null, this);
-  game.physics.arcade.overlap(players, level.enemies, killPlayer, null, this);
+  create() {
+    game.world.setBounds(0, 0, worldWidth, worldHeight);
 
-  players.children.forEach(updatePlayer);
+    game.physics.startSystem(Phaser.Physics.ARCADE);
 
-  firstPlayer = null;
-  players.children.forEach(player => {
-    if (!player.alive) return;
-    if (!firstPlayer || player.x > firstPlayer.x) {
-      firstPlayer = player;
+    game.add.tileSprite(0, 0, game.width, game.height, 'background');
+
+    this.players = game.add.group();
+    for (let i = 0; i < totalPlayers; i++) {
+      const player = new Player(game, i);
+      this.players.add(player);
+      player.checkWorldBounds = true;
+      player.events.onOutOfBounds.add(this.killPlayer);
     }
-  })
 
-  if (!firstPlayer) {
-    restart();
-  } else {
-    game.camera.follow(firstPlayer, undefined, 0.1, 0.1);
+    this.level = new LevelGenerator(game);
+    this.level.create(this.levelInput);
+
+    AI.nextGeneration();
   }
-}
 
-function updatePlayer(player) {
-  player.body.velocity.x = 0;
+  update() {
+    game.physics.arcade.collide(this.players, this.level.walls);
+    game.physics.arcade.overlap(this.players, this.level.coins, this.takeCoin, null, this);
+    game.physics.arcade.overlap(this.players, this.level.enemies, this.killPlayer, null, this);
 
-  if (cursors.left.isDown) {
-    player.body.velocity.x = -150;
+    this.players.children.forEach(this.updatePlayer);
 
-    if (facing != 'left') {
-      player.animations.play('left');
-      facing = 'left';
-    }
-  }
-  else if (cursors.right.isDown) {
-    player.body.velocity.x = 150;
-
-    if (facing != 'right') {
-      player.animations.play('right');
-      facing = 'right';
-    }
-  }
-  else {
-    if (facing != 'idle') {
-      player.animations.stop();
-
-      if (facing == 'left') {
-        player.frame = 0;
-      } else {
-        player.frame = 5;
+    this.firstPlayer = null;
+    this.players.children.forEach(player => {
+      if (!player.alive) return;
+      if (!this.firstPlayer || player.x > this.firstPlayer.x) {
+        this.firstPlayer = player;
       }
+    })
 
-      facing = 'idle';
-    }
-  }
-
-  if (firstPlayer && firstPlayer.index === player.index) {
-    // if (jumpButton.isDown && player.body.onFloor() && game.time.now > jumpTimer) {
-    if (jumpButton.isDown && player.body.touching.down && game.time.now > jumpTimer) {
-      player.body.velocity.y = -500;
-      jumpTimer = game.time.now + 750;
-    }
-  } else {
-    // TODO transformar o gameState em class
-    // e passar para a AI processar usando qq variável
-    // possíveis variáveis:
-      // local da moeda mais próxima
-      // local do inimigo mais próximo
-      // relevo a frente e p tras
-      // olhar aquele link de ref
-    const inputs = [
-      player.position.x / game.world.width,
-      player.position.y / game.world.height,
-      // coins.children[0].position.x,
-      // coins.children[0].position.y,
-      // can jump
-    ];
-    const result = AI.compute(player.index, inputs);
-    // console.log(result, player.index, inputs)
-
-    if (result > 0.5) {
-      player.body.velocity.x = 150;
+    if (!this.firstPlayer) {
+      this.restart();
     } else {
-      player.body.velocity.x = -150;
+      game.camera.follow(this.firstPlayer, undefined, 0.1, 0.1);
     }
+  }
+
+  updatePlayer(player) {
+    player.body.velocity.x = 0;
+
+    if (!player.humanControl) {
+      // TODO transformar o gameState em class
+      // e passar para a AI processar usando qq variável
+      // possíveis variáveis:
+        // local da moeda mais próxima
+        // local do inimigo mais próximo
+        // relevo a frente e p tras
+        // olhar aquele link de ref
+      const inputs = [
+        player.position.x / game.world.width,
+        player.position.y / game.world.height,
+        // coins.children[0].position.x,
+        // coins.children[0].position.y,
+        // can jump
+      ];
+      const result = AI.compute(player.index, inputs);
+      // console.log(result, player.index, inputs)
+
+      if (result > 0.5) {
+        player.body.velocity.x = 150;
+      } else {
+        player.body.velocity.x = -150;
+      }
+    }
+  }
+
+  render() {
+    if (devMode) {
+      // game.debug.text(game.time.physicsElapsed, 20, 20);
+      // game.debug.cameraInfo(game.camera, 20, 20);
+
+      game.debug.text(`Score: ${this.firstPlayer ? this.firstPlayer.score : 0}`, 20, 40);
+      game.debug.text(`Max Score: ${this.maxScore}`, 20, 60);
+      game.debug.text(`Generation: ${AI.generationAmount}`, 20, 80);
+      game.debug.text(`Alives: ${this.players.children.filter(p => p.alive).length}`, 20, 100);
+
+      if (this.firstPlayer) {
+        // game.debug.body(this.firstPlayer);
+        // game.debug.bodyInfo(this.firstPlayer, 20, 20);
+        game.debug.spriteCoords(this.firstPlayer, 20, 450);
+      }
+    }
+  }
+
+  takeCoin(player, coin) {
+    // console.log('takeCoin', player, coin)
+    coin.kill();
+    player.score++;
+    this.maxScore = Math.max(this.maxScore, player.score);
+  }
+
+  killPlayer(player, coin) {
+    // console.log('killPlayer', player, coin)
+    player.kill();
+  }
+
+  restart() {
+    // console.log('restart');
+    this.players.children.forEach(p => AI.setScore(p.index, p.score));
+    game.state.start('play');
+  }
+
+  updateLevel(input) {
+    this.levelInput = input;
+    this.restart();
   }
 }
 
-function render() {
-  if (devMode) {
-    // game.debug.text(game.time.physicsElapsed, 20, 20);
-    // game.debug.cameraInfo(game.camera, 20, 20);
+const game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'phaser');
+const play = new Play();
 
-    game.debug.text(`Score: ${firstPlayer ? firstPlayer.score : 0}`, 20, 40);
-    game.debug.text(`Max Score: ${maxScore}`, 20, 60);
-    game.debug.text(`Generation: ${AI.generationAmount}`, 20, 80);
-    game.debug.text(`Alives: ${players.children.filter(p => p.alive).length}`, 20, 100);
+game.state.add('play', play);  
+game.state.start('play');
 
-    if (firstPlayer) {
-      // game.debug.body(firstPlayer);
-      // game.debug.bodyInfo(firstPlayer, 20, 20);
-      game.debug.spriteCoords(firstPlayer, 20, 450);
-    }
-  }
-}
-
-function takeCoin(player, coin) {
-  // console.log('takeCoin', player, coin)
-  player.score++;
-  maxScore = Math.max(maxScore, player.score);
-  coin.kill();
-}
-
-function killPlayer(player, coin) {
-  // console.log('killPlayer', player, coin)
-  player.kill();
-}
-
-function restart() {
-  // console.log('restart');
-  players.children.forEach(p => AI.setScore(p.index, p.score));
-  game.state.start('main');
-}
-
-function updateLevel(_input) {
-  input = _input;
-  restart();
-}
-
-export default {
-  restart,
-  updateLevel,
-}
+export default play;

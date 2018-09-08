@@ -14,10 +14,63 @@ class Player extends Phaser.Sprite {
 
     this.index = index;
     this.score = 0;
+
+    this.humanControl = (index === 4);
+    if (this.humanControl) {
+      this.facing = 'left';
+      this.jumpTimer = 0;
+      this.cursors = this.game.input.keyboard.createCursorKeys();
+    }
   }
 
   update() {
-    // if (this.alive) console.log('update', this.index)
+    if (this.humanControl) {
+      this.updateByHuman();
+    }
+  }
+
+  updateByHuman() {
+    if (!this.alive) {
+      return;
+    }
+
+    this.body.velocity.x = 0;
+
+    if (this.cursors.left.isDown) {
+      this.body.velocity.x = -150;
+
+      if (this.facing !== 'left') {
+        this.animations.play('left');
+        this.facing = 'left';
+      }
+    }
+    else if (this.cursors.right.isDown) {
+      this.body.velocity.x = 150;
+
+      if (this.facing !== 'right') {
+        this.animations.play('right');
+        this.facing = 'right';
+      }
+    }
+    else {
+      if (this.facing !== 'idle') {
+        this.animations.stop();
+
+        if (this.facing === 'left') {
+          this.frame = 0;
+        } else {
+          this.frame = 5;
+        }
+
+        this.facing = 'idle';
+      }
+    }
+
+    // TODO usar o player.body.onFloor()
+    if (this.cursors.up.isDown && this.body.touching.down && this.game.time.now > this.jumpTimer) {
+      this.body.velocity.y = -500;
+      this.jumpTimer = this.game.time.now + 750;
+    }
   }
 }
 
