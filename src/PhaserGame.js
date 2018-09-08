@@ -35,6 +35,8 @@ let enemies;
 
 let input = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 0, 0, 0, 0, 0];
 
+let maxScore = 0;
+
 function preload() {
   game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
@@ -72,7 +74,7 @@ function create() {
 
   createLevel();
 
-  AI.start();
+  AI.nextGeneration();
 }
 
 function createLevel() {
@@ -198,9 +200,9 @@ function update() {
   }
 }
 
-function updatePlayer(player) {    
+function updatePlayer(player) {
   game.physics.arcade.collide(player, walls);
-  game.physics.arcade.overlap(player, coins, takeCoin, null, this)
+  game.physics.arcade.overlap(player, coins, takeCoin, null, this);
   game.physics.arcade.overlap(player, enemies, killPlayer, null, this);
 
   player.body.velocity.x = 0;
@@ -241,7 +243,7 @@ function updatePlayer(player) {
       player.body.velocity.y = -500;
       jumpTimer = game.time.now + 750;
     }
-
+  } else {
     // TODO transformar o gameState em class
     // e passar para a AI processar usando qq variável
     // possíveis variáveis:
@@ -256,22 +258,31 @@ function updatePlayer(player) {
       // coins.children[0].position.y,
       // can jump
     ];
-    const result = AI.process(inputs, player.index);
+    const result = AI.compute(player.index, inputs);
     // console.log(result, player.index, inputs)
-  } else {
+
+    if (result > 0.5) {
+      player.body.velocity.x = 150;
+    } else {
+      player.body.velocity.x = -150;
+    }
   }
 }
 
 function render() {
   if (devMode) {
     // game.debug.text(game.time.physicsElapsed, 20, 20);
-    game.debug.cameraInfo(game.camera, 32, 32);
+    // game.debug.cameraInfo(game.camera, 20, 20);
+
+    game.debug.text(`Score: ${firstPlayer ? firstPlayer.score : 0}`, 20, 40);
+    game.debug.text(`Max Score: ${maxScore}`, 20, 60);
+    game.debug.text(`Generation: ${AI.generationAmount}`, 20, 80);
+    game.debug.text(`Alives: ${players.filter(p => p.alive).length}`, 20, 100);
 
     if (firstPlayer) {
       // game.debug.body(firstPlayer);
       // game.debug.bodyInfo(firstPlayer, 20, 20);
       game.debug.spriteCoords(firstPlayer, 20, 450);
-      game.debug.text(`Score: ${firstPlayer.score}`, 20, 500, 'yellow');
     }
   }
 }
@@ -279,19 +290,22 @@ function render() {
 function takeCoin(player, coin) {
   // console.log('takeCoin', player, coin)
   player.score++;
+
+  maxScore = Math.max(maxScore, player.score);
+
   coin.kill();
 }
 
 function killPlayer(player, coin) {
-  AI.setScore(player.score, player.index);
-
   // console.log('killPlayer', player, coin)
   player.kill();
-
 }
 
 function restart() {
   console.log('restart');
+
+  players.forEach(p => AI.setScore(p.index, p.score));
+
   game.state.start('main');
 }
 
