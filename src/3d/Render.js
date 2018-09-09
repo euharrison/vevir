@@ -1,11 +1,10 @@
 import * as THREE from 'three';
 
-import Config from './Config';
+import Config from '../Config';
 import Detector from './Detector';
 import Human from './Human';
-import PhaserGame from './PhaserGame';
-
-import './scss/style.scss';
+import Terrain from './Terrain';
+import PhaserGame from '../PhaserGame';
 
 if (!Detector.webgl) Detector.addGetWebGLMessage();
 
@@ -31,9 +30,17 @@ class Render {
     this.humans = [];
     for (let i = 0; i < Config.population; i++) {
       const human = new Human();
+      human.rotation.y = 90 * Math.PI/180;
+      human.position.x = -200;
+      human.position.z = -300 * i;
+      this.scene.add(human);
       this.humans.push(human);
-      this.addHuman(human, i);
     }
+
+    //
+
+    this.terrain = new Terrain();
+    this.scene.add(this.terrain);
 
     //
 
@@ -84,13 +91,6 @@ class Render {
       // this.camera.position.x = firstPlayer.position.x;
       // this.camera.lookAt(this.humans[firstPlayer.index].position);
     }
-  }
-
-  addHuman(human, index) {
-    human.rotation.y = 90 * Math.PI/180;
-    human.position.x = -200;
-    human.position.z = -300 * index;
-    this.scene.add(human);
   }
 }
 

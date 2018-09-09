@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import MathUtils from './MathUtils';
+import MathUtils from '../MathUtils';
 
 class Human extends THREE.Group {
   constructor() {
