@@ -1,8 +1,10 @@
+import Config from './Config';
+
 class AI {
 	constructor() {
 		this.generationAmount = 0;
 		this.neuvol = new Neuroevolution({
-			population: 100,
+			population: Config.population,
 			network: [2, [2], 3],
 		});
 	}

@@ -1,24 +1,14 @@
 import * as d3 from "d3";
 
+import Config from './Config';
 import AI from './AI';
 import Player from "./Player";
 import LevelGenerator from "./LevelGenerator";
-
-const devMode = true;
-
-const totalPlayers = 100;
-
-const gameWidth = 1920/2;
-const gameHeight = 1080/2;
-
-const worldWidth = gameWidth; // * 4
-const worldHeight = gameHeight;
 
 class Play extends Phaser.State {
   constructor() {
     super();
     this.key = 'play';
-
     this.maxScore = 0;
     this.levelInput = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 10, 8, 12, 0, 0];
   }
@@ -35,7 +25,7 @@ class Play extends Phaser.State {
   }
 
   create() {
-    game.world.setBounds(0, 0, worldWidth, worldHeight);
+    game.world.setBounds(0, 0, game.width * Config.worldWidth, game.height);
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -45,7 +35,7 @@ class Play extends Phaser.State {
     this.level.create(this.levelInput);
 
     this.players = game.add.group();
-    for (let i = 0; i < totalPlayers; i++) {
+    for (let i = 0; i < Config.population; i++) {
       const player = new Player(i, game, this.level);
       this.players.add(player);
       player.checkWorldBounds = true;
@@ -78,7 +68,7 @@ class Play extends Phaser.State {
   }
 
   render() {
-    if (devMode) {
+    if (Config.devMode) {
       // game.debug.text(game.time.physicsElapsed, 20, 20);
       // game.debug.cameraInfo(game.camera, 20, 20);
 
@@ -121,7 +111,7 @@ class Play extends Phaser.State {
   }
 }
 
-const game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'phaser');
+const game = new Phaser.Game(Config.screenWidth/2, Config.screenHeight/2, Phaser.AUTO, 'game');
 const play = new Play();
 
 game.state.add('play', play);  
