@@ -3,12 +3,12 @@ export default {
   devMode: true,
 
   // amount of players in the same game
-  population: 10,
+  population: 4,
 
-  // width of the world in viewport units
-  worldWidth: 2,
+  // dimensions of game, keep it low to improve performance
+  gameWidth: 1920/2,
+  gameHeight: 1080/2,
 
-  // dimensions of viewports
-  screenWidth: 1920,
-  screenHeight: 1080,
+  // width of level in viewport units
+  levelWidth: 2,
 }

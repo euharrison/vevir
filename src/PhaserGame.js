@@ -25,7 +25,7 @@ class Play extends Phaser.State {
   }
 
   create() {
-    game.world.setBounds(0, 0, game.width * Config.worldWidth, game.height);
+    game.world.setBounds(0, 0, game.width * Config.levelWidth, game.height);
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -111,7 +111,7 @@ class Play extends Phaser.State {
   }
 }
 
-const game = new Phaser.Game(Config.screenWidth/2, Config.screenHeight/2, Phaser.AUTO, 'game');
+const game = new Phaser.Game(Config.gameWidth, Config.gameHeight, Phaser.AUTO, 'game');
 const play = new Play();
 
 game.state.add('play', play);  

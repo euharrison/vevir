@@ -2,6 +2,7 @@ import $ from 'jquery';
 
 import AudioController from './AudioController';
 import PhaserGame from './PhaserGame';
+import Render from './Render';
 
 import './scss/style.scss';
 
