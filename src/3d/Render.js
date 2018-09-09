@@ -4,7 +4,7 @@ import Config from '../Config';
 import Detector from './Detector';
 import Human from './Human';
 import Terrain from './Terrain';
-import PhaserGame from '../PhaserGame';
+import Play from '../game/Play';
 
 if (!Detector.webgl) Detector.addGetWebGLMessage();
 
@@ -77,16 +77,16 @@ class Render {
   }
 
   render() {
-    if (!PhaserGame.players || !PhaserGame.players.children) {
+    if (!Play.players || !Play.players.children) {
       return;
     }
 
-    const players = PhaserGame.players.children;
+    const players = Play.players.children;
     this.humans.forEach((human, i) => {
       human.update(players[i]);
     });
 
-    const firstPlayer = PhaserGame.firstPlayer;
+    const firstPlayer = Play.firstPlayer;
     if (firstPlayer) {
       // this.camera.position.x = firstPlayer.position.x;
       // this.camera.lookAt(this.humans[firstPlayer.index].position);

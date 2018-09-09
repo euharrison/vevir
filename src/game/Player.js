@@ -1,5 +1,5 @@
 import AI from './AI';
-import Config from './Config';
+import Config from '../Config';
 
 class Player extends Phaser.Sprite {
   constructor(index, game, level) {

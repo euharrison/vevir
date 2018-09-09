@@ -1,7 +1,7 @@
 import $ from 'jquery';
 
 import AudioController from './AudioController';
-import PhaserGame from './PhaserGame';
+import Play from './game/Play';
 import Render from './3d/Render';
 
 import './scss/style.scss';
@@ -12,12 +12,12 @@ function onKeyPress(e) {
   switch(e.key) {
     case 'r':
     case 'R':
-      PhaserGame.restart();
+      Play.restart();
       break;
     case 'u':
     case 'U':
       const spectrogram = AudioController.getSpectrogram();
-      PhaserGame.updateLevel(spectrogram);
+      Play.updateLevel(spectrogram);
       break;
   }
 }
