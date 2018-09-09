@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import Config from './Config';
 import Detector from './Detector';
 import Human from './Human';
+import PhaserGame from './PhaserGame';
 
 import './scss/style.scss';
 
@@ -48,8 +49,8 @@ class Render {
 
     window.addEventListener('resize', this.onWindowResize.bind(this));
 
-    this.render = this.render.bind(this);
-    this.render();
+    this.update = this.update.bind(this);
+    this.update();
   }
 
   onWindowResize() {
@@ -59,17 +60,30 @@ class Render {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-  render(timestamp) {
-    // console.log(a);
-    window.requestAnimationFrame(this.render);
+  update(timestamp) {
+    window.requestAnimationFrame(this.update);
 
-    for (let i = 0; i < this.humans.length; i++) {
-      this.humans[i].update(Math.random() * 5 + 50);
+    this.render();
+    this.renderer.render(this.scene, this.camera);
+
+    this.stats.update();
+  }
+
+  render() {
+    if (!PhaserGame.players || !PhaserGame.players.children) {
+      return;
     }
 
-    // this.render();
-    this.renderer.render(this.scene, this.camera);
-    this.stats.update();
+    const players = PhaserGame.players.children;
+    this.humans.forEach((human, i) => {
+      human.update(players[i]);
+    });
+
+    const firstPlayer = PhaserGame.firstPlayer;
+    if (firstPlayer) {
+      // this.camera.position.x = firstPlayer.position.x;
+      // this.camera.lookAt(this.humans[firstPlayer.index].position);
+    }
   }
 
   addHuman(human, index) {

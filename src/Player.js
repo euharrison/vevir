@@ -1,4 +1,5 @@
 import AI from './AI';
+import Config from './Config';
 
 class Player extends Phaser.Sprite {
   constructor(index, game, level) {
@@ -20,8 +21,7 @@ class Player extends Phaser.Sprite {
     this.score = 0;
     this.jumpTimer = 0;
 
-    this.humanControl = (index === 4);
-    // this.humanControl = false;
+    this.humanControl = Config.humanControl && index === 0;
     if (this.humanControl) {
       this.facing = 'left';
       this.cursors = this.game.input.keyboard.createCursorKeys();

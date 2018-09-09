@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+import MathUtils from './MathUtils';
+
 class Human extends THREE.Group {
   constructor() {
     super();
@@ -72,25 +74,18 @@ class Human extends THREE.Group {
     this.add( this.mouth );
   }
 
-  update(weight) {
+  update(player) {
     var timerMouth = Date.now() * 0.01;
-    this.mouth.scale.y = MathMap(Math.sin(timerMouth), -1, 1, 0.5, 1);
+    this.mouth.scale.y = MathUtils.map(Math.sin(timerMouth), -1, 1, 0.5, 1);
 
-    const isDead = weight < 50 || weight > 100;
-    if (isDead) {
-      // TODO delete human
-      // human.parent.remove(this);
-      this.visible = false;
-      this.scale.set(0.001, 0.001, 0.001);
-    } else {
-      const scale = MathMap(weight, 50, 70, 0.25, 1);
-      this.scale.set(scale, scale, scale);
-    }
+    this.position.x = player.x;
+    this.position.y = -player.y;
+
+    this.visible = player.alive;
+
+    const scale = MathUtils.map(player.score, 0, 200, 0.5, 1);
+    this.scale.set(scale, scale, scale);
   }
 }
 
 export default Human;
-
-function MathMap(x, in_min, in_max, out_min, out_max) {
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
