@@ -113,7 +113,14 @@ class Play extends Phaser.State {
   }
 }
 
-const game = new Phaser.Game(Config.gameWidth, Config.gameHeight, Phaser.AUTO, 'game');
+const config = {
+  width: Config.gameWidth,
+  height: Config.gameHeight,
+  renderer: Config.devMode ? Phaser.AUTO : Phaser.HEADLESS,
+  antialias: false,
+  parent: 'game',
+}
+const game = new Phaser.Game(config);
 const play = new Play();
 
 game.state.add('play', play);  

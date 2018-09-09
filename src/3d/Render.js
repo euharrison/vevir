@@ -41,8 +41,10 @@ class Render {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('render').appendChild(this.renderer.domElement);
 
-    this.stats = new Stats();
-    document.getElementById('render').appendChild(this.stats.dom);
+    if (Config.devMode) {
+      this.stats = new Stats();
+      document.getElementById('render').appendChild(this.stats.dom);
+    }
 
     //
 
@@ -65,7 +67,9 @@ class Render {
     this.render();
     this.renderer.render(this.scene, this.camera);
 
-    this.stats.update();
+    if (this.stats) {
+      this.stats.update();
+    }
   }
 
   render() {
