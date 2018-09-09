@@ -6,12 +6,12 @@ import LevelGenerator from "./LevelGenerator";
 
 const devMode = true;
 
-const totalPlayers = 10;
+const totalPlayers = 100;
 
 const gameWidth = 1920/2;
 const gameHeight = 1080/2;
 
-const worldWidth = gameWidth * 2; // * 4
+const worldWidth = gameWidth; // * 4
 const worldHeight = gameHeight;
 
 class Play extends Phaser.State {
@@ -19,7 +19,8 @@ class Play extends Phaser.State {
     super();
     this.key = 'play';
 
-    this.levelInput = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 0, 0, 0, 0, 0];
+    this.maxScore = 0;
+    this.levelInput = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 10, 8, 12, 0, 0];
   }
 
   preload() {
@@ -40,26 +41,26 @@ class Play extends Phaser.State {
 
     game.add.tileSprite(0, 0, game.width, game.height, 'background');
 
+    this.level = new LevelGenerator(game);
+    this.level.create(this.levelInput);
+
     this.players = game.add.group();
     for (let i = 0; i < totalPlayers; i++) {
-      const player = new Player(game, i);
+      const player = new Player(i, game, this.level);
       this.players.add(player);
       player.checkWorldBounds = true;
       player.events.onOutOfBounds.add(this.killPlayer);
     }
 
-    this.level = new LevelGenerator(game);
-    this.level.create(this.levelInput);
-
     AI.nextGeneration();
+
+    this.gameTimer = setTimeout(() => this.restart(), 7000);
   }
 
   update() {
     game.physics.arcade.collide(this.players, this.level.walls);
     game.physics.arcade.overlap(this.players, this.level.coins, this.takeCoin, null, this);
     game.physics.arcade.overlap(this.players, this.level.enemies, this.killPlayer, null, this);
-
-    this.players.children.forEach(this.updatePlayer);
 
     this.firstPlayer = null;
     this.players.children.forEach(player => {
@@ -73,35 +74,6 @@ class Play extends Phaser.State {
       this.restart();
     } else {
       game.camera.follow(this.firstPlayer, undefined, 0.1, 0.1);
-    }
-  }
-
-  updatePlayer(player) {
-    player.body.velocity.x = 0;
-
-    if (!player.humanControl) {
-      // TODO transformar o gameState em class
-      // e passar para a AI processar usando qq variável
-      // possíveis variáveis:
-        // local da moeda mais próxima
-        // local do inimigo mais próximo
-        // relevo a frente e p tras
-        // olhar aquele link de ref
-      const inputs = [
-        player.position.x / game.world.width,
-        player.position.y / game.world.height,
-        // coins.children[0].position.x,
-        // coins.children[0].position.y,
-        // can jump
-      ];
-      const result = AI.compute(player.index, inputs);
-      // console.log(result, player.index, inputs)
-
-      if (result > 0.5) {
-        player.body.velocity.x = 150;
-      } else {
-        player.body.velocity.x = -150;
-      }
     }
   }
 
@@ -125,7 +97,7 @@ class Play extends Phaser.State {
 
   takeCoin(player, coin) {
     // console.log('takeCoin', player, coin)
-    coin.kill();
+    // coin.kill();
     player.score++;
     this.maxScore = Math.max(this.maxScore, player.score);
   }
@@ -137,8 +109,10 @@ class Play extends Phaser.State {
 
   restart() {
     // console.log('restart');
+    clearTimeout(this.gameTimer);
     this.players.children.forEach(p => AI.setScore(p.index, p.score));
-    game.state.start('play');
+
+    game.state.restart();
   }
 
   updateLevel(input) {

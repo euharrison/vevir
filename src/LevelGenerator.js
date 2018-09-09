@@ -35,6 +35,7 @@ class LevelGenerator extends Phaser.Group {
 
     const horizontalValues = new Array(horizontalLength).fill(0).map((v, index) => scaleHorizontalValue(index))
 
+    let hasCoin = false;
     for (var y = 0; y < verticalLength; y++) {
       level[y] = [];
       for (var x = 0; x < horizontalLength; x++) {
@@ -42,10 +43,17 @@ class LevelGenerator extends Phaser.Group {
           level[y][x] = 'x';
         }
         else if (y > verticalLength - horizontalValues[x] - 2) {
-          level[y][x] = Math.random() < 0.05 ? '!' : ' ';
+          // level[y][x] = Math.random() < 0.05 ? '!' : ' ';
+          level[y][x] = ' ';
         }
         else if (y > verticalLength - horizontalValues[x] - 3) {
-          level[y][x] = Math.random() < 0.1 ? 'o' : ' ';
+          // level[y][x] = Math.random() < 0.1 ? 'o' : ' ';
+          if (x > 70) {
+            level[y][x] = hasCoin ? ' ' : 'o';
+            hasCoin = true;
+          } else {
+            level[y][x] = ' ';
+          }
         }
         else {
           level[y][x] = ' ';//'o';

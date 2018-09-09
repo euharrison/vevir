@@ -1,6 +1,9 @@
+import AI from './AI';
+
 class Player extends Phaser.Sprite {
-  constructor(game, index) {
-    super(game, (index === 4 ? 400 : Math.random()*100), 100, 'player');
+  constructor(index, game, level) {
+    // super(game, 30 + index*10, 100, 'player');
+    super(game, 30 + index*1, 100, 'player');
 
     game.physics.arcade.enable(this);
 
@@ -12,10 +15,11 @@ class Player extends Phaser.Sprite {
     this.animations.add('turn', [4], 20, true);
     this.animations.add('right', [5, 6, 7, 8], 10, true);
 
+    this.level = level;
     this.index = index;
     this.score = 0;
 
-    this.humanControl = (index === 4);
+    this.humanControl = false; (index === 4);
     if (this.humanControl) {
       this.facing = 'left';
       this.jumpTimer = 0;
@@ -24,18 +28,20 @@ class Player extends Phaser.Sprite {
   }
 
   update() {
-    if (this.humanControl) {
-      this.updateByHuman();
-    }
-  }
-
-  updateByHuman() {
     if (!this.alive) {
       return;
     }
 
     this.body.velocity.x = 0;
+    if (this.humanControl) {
+      this.computeAI(true);
+      this.updateByHuman();
+    } else {
+      this.updateByAI();
+    }
+  }
 
+  updateByHuman() {
     if (this.cursors.left.isDown) {
       this.body.velocity.x = -150;
 
@@ -71,6 +77,52 @@ class Player extends Phaser.Sprite {
       this.body.velocity.y = -500;
       this.jumpTimer = this.game.time.now + 750;
     }
+  }
+
+  updateByAI() {
+    const result = this.computeAI();
+    if (result.goRight) {
+      this.body.velocity.x = 150;
+    } else {
+      this.body.velocity.x = -150;
+    }
+  }
+
+  computeAI(debug) {
+    // TODO
+    // local da moeda mais próxima
+    // local do inimigo mais próximo
+    // relevo a frente e p tras
+    // se pode ou não pular
+
+    const playerX = this.position.x;
+    const playerY = this.position.y;
+
+    // TODO pegar a coin mais perto
+    const coin = this.level.coins.children[0];
+    const coinX = coin.position.x;
+    const coinY = coin.position.y;
+
+    const coinDistanceX = (coinX - playerX) / this.game.world.width;
+    const coinDistanceY = (coinY - playerY) / this.game.world.height;
+
+    const input = [
+      coinDistanceX,
+      coinDistanceY,
+      // can jump
+    ];
+
+    const output = AI.compute(this.index, input).map(o => Math.round(o));
+
+    if (debug) {
+      console.log(output, input)
+    }
+
+    return {
+      goRight: output[0],
+      goLeft: output[1],
+      jump: false, // TODO
+    };
   }
 }
 

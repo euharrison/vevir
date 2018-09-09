@@ -2,8 +2,8 @@ class AI {
 	constructor() {
 		this.generationAmount = 0;
 		this.neuvol = new Neuroevolution({
-			population: 10,
-			network: [2, [2], 1],
+			population: 100,
+			network: [2, [2], 2],
 		});
 	}
 
