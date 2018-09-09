@@ -1,18 +1,17 @@
 import * as THREE from 'three';
 
 class Terrain extends THREE.Group {
-  constructor() {
+  constructor(tiles) {
     super();
 
-    const tiles = [
-      { x: 0, y: 0, width: 100, height: 100 },
-      { x: 100, y: 100, width: 100, height: 100 },
-      { x: 200, y: 100, width: 100, height: 100 },
-    ];
+    var material = new THREE.MeshPhongMaterial( { 
+      // color: new THREE.Color(`hsl(${humanHue}, 100%, 50%)`),
+      color: new THREE.Color(`hsl(150, 100%, 50%)`),
+      shininess: 30,
+      flatShading: true,
+    } );
 
-    const texture = new THREE.TextureLoader().load('assets/images/crate.gif');
-    const geometry = new THREE.BoxBufferGeometry(100, 100, 100);
-    const material = new THREE.MeshBasicMaterial({ map: texture });
+    const geometry = new THREE.BoxBufferGeometry(tiles[0].width, tiles[0].height, 100);
 
     tiles.forEach(tile => {
       const mesh = new THREE.Mesh(geometry, material);

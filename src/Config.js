@@ -6,7 +6,7 @@ export default {
   humanControl: false,
 
   // amount of players in the same game, don't set < 2, it will crash the app
-  population: 3,
+  population: 10,
 
   // dimensions of game, keep it low to improve performance
   gameWidth: 1920/2,

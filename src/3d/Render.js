@@ -12,7 +12,7 @@ class Render {
   constructor() {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 20000);
     this.camera.position.y = 200;
-    this.camera.position.z = 1 * 800;
+    this.camera.position.z = 3 * 800;
 
     this.scene = new THREE.Scene();
 
@@ -36,11 +36,6 @@ class Render {
       this.scene.add(human);
       this.humans.push(human);
     }
-
-    //
-
-    this.terrain = new Terrain();
-    this.scene.add(this.terrain);
 
     //
 
@@ -91,6 +86,16 @@ class Render {
       // this.camera.position.x = firstPlayer.position.x;
       // this.camera.lookAt(this.humans[firstPlayer.index].position);
     }
+  }
+
+  updateTerrain() {
+    console.log('updateLevel', Play.level.walls.children[0])
+    if (this.terrain) {
+      this.scene.remove(this.terrain);
+    }
+
+    this.terrain = new Terrain(Play.level.walls.children);
+    this.scene.add(this.terrain);
   }
 }
 

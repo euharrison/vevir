@@ -18,6 +18,7 @@ function onKeyPress(e) {
     case 'U':
       const spectrogram = AudioController.getSpectrogram();
       Play.updateLevel(spectrogram);
+      Render.updateTerrain();
       break;
   }
 }
