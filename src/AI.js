@@ -3,7 +3,7 @@ class AI {
 		this.generationAmount = 0;
 		this.neuvol = new Neuroevolution({
 			population: 100,
-			network: [2, [2], 2],
+			network: [2, [2], 3],
 		});
 	}
 

@@ -18,11 +18,12 @@ class Player extends Phaser.Sprite {
     this.level = level;
     this.index = index;
     this.score = 0;
+    this.jumpTimer = 0;
 
-    this.humanControl = false; (index === 4);
+    this.humanControl = (index === 4);
+    // this.humanControl = false;
     if (this.humanControl) {
       this.facing = 'left';
-      this.jumpTimer = 0;
       this.cursors = this.game.input.keyboard.createCursorKeys();
     }
   }
@@ -34,7 +35,7 @@ class Player extends Phaser.Sprite {
 
     this.body.velocity.x = 0;
     if (this.humanControl) {
-      this.computeAI(true);
+      // this.computeAI(true);
       this.updateByHuman();
     } else {
       this.updateByAI();
@@ -80,11 +81,19 @@ class Player extends Phaser.Sprite {
   }
 
   updateByAI() {
-    const result = this.computeAI();
-    if (result.goRight) {
+    const brain = this.computeAI();
+
+    if (brain.goRight && !brain.goLeft) {
       this.body.velocity.x = 150;
-    } else {
+    }
+    
+    if (brain.goLeft && !brain.goRight) {
       this.body.velocity.x = -150;
+    }
+
+    if (brain.jump && this.body.touching.down && this.game.time.now > this.jumpTimer) {
+      this.body.velocity.y = -500;
+      this.jumpTimer = this.game.time.now + 750;
     }
   }
 
@@ -121,7 +130,7 @@ class Player extends Phaser.Sprite {
     return {
       goRight: output[0],
       goLeft: output[1],
-      jump: false, // TODO
+      jump: output[2],
     };
   }
 }
