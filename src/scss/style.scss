@@ -2,7 +2,7 @@
 @import 'fonts';
 
 body {
-  background-color: #fff;
+  background-color: black;
   margin: 0;
   overflow: hidden;
 }
@@ -17,9 +17,9 @@ body {
 
 #game {
   position: fixed;
-  // top: 50%;
-  // left: 50%;
+  top: 0;
+  left: 0;
   right: 0;
   bottom: 0;
-  width: 50vw;
+  opacity: 0.5;
 }

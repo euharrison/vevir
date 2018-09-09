@@ -42,7 +42,7 @@ class Play extends Phaser.State {
 
     AI.nextGeneration();
 
-    this.gameTimer = setTimeout(() => this.restart(), 7000);
+    // this.gameTimer = setTimeout(() => this.restart(), 7000);
   }
 
   update() {
@@ -61,26 +61,30 @@ class Play extends Phaser.State {
     if (!this.firstPlayer) {
       this.restart();
     } else {
-      this.game.camera.follow(this.firstPlayer, undefined, 0.1, 0.1);
+      this.game.camera.follow(this.focusPlayer(), undefined, 0.1, 0.1);
     }
   }
 
   render() {
     if (Config.devMode) {
       // this.game.debug.text(this.game.time.physicsElapsed, 20, 20);
-      // this.game.debug.cameraInfo(this.game.camera, 20, 20);
+      this.game.debug.cameraInfo(this.game.camera, 20, 20);
 
-      this.game.debug.text(`Score: ${this.firstPlayer ? this.firstPlayer.score : 0}`, 20, 40);
-      this.game.debug.text(`Max Score: ${this.maxScore}`, 20, 60);
-      this.game.debug.text(`Generation: ${AI.generationAmount}`, 20, 80);
-      this.game.debug.text(`Alives: ${this.players.children.filter(p => p.alive).length}`, 20, 100);
+      // this.game.debug.text(`Score: ${this.focusPlayer() ? this.focusPlayer().score : 0}`, 20, 40);
+      // this.game.debug.text(`Max Score: ${this.maxScore}`, 20, 60);
+      // this.game.debug.text(`Generation: ${AI.generationAmount}`, 20, 80);
+      // this.game.debug.text(`Alives: ${this.players.children.filter(p => p.alive).length}`, 20, 100);
 
       if (this.firstPlayer) {
-        // this.game.debug.body(this.firstPlayer);
-        // this.game.debug.bodyInfo(this.firstPlayer, 20, 20);
-        this.game.debug.spriteCoords(this.firstPlayer, 20, 450);
+        // this.game.debug.body(this.focusPlayer());
+        // this.game.debug.bodyInfo(this.focusPlayer(), 20, 20);
+        this.game.debug.spriteCoords(this.focusPlayer(), 20, 450);
       }
     }
+  }
+
+  focusPlayer() {
+    return Config.humanControl ? this.players.children[0] : this.firstPlayer;
   }
 
   takeCoin(player, coin) {

@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+import Config from '../Config';
+
 class Terrain extends THREE.Group {
   constructor(tiles) {
     super();
@@ -11,13 +13,20 @@ class Terrain extends THREE.Group {
       flatShading: true,
     } );
 
-    const geometry = new THREE.BoxBufferGeometry(tiles[0].width, tiles[0].height, 100);
+    const tileDepth = 100;
+
+    const width = tiles[0].width;
+    const height = tiles[0].height;
+    const depth = tileDepth * Config.population;
+
+    const geometry = new THREE.BoxBufferGeometry(width, height, depth);
 
     tiles.forEach(tile => {
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.x = tile.x;
       mesh.position.y = -tile.y;
-      this.add( mesh );
+      mesh.position.z = -depth/2 + tileDepth;
+      this.add(mesh);
     });
   }
 }

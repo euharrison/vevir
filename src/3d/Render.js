@@ -11,8 +11,8 @@ if (!Detector.webgl) Detector.addGetWebGLMessage();
 class Render {
   constructor() {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 20000);
-    this.camera.position.y = 200;
-    this.camera.position.z = 3 * 800;
+    this.camera.position.z = 800 * 2;
+    this.camera.rotation.x = -10 * Math.PI/180;
 
     this.scene = new THREE.Scene();
 
@@ -23,16 +23,13 @@ class Render {
     this.camera.add(pointLight);
     this.scene.add(this.camera);
 
-    this.camera.lookAt(this.scene.position);
-
     //
 
     this.humans = [];
     for (let i = 0; i < Config.population; i++) {
       const human = new Human();
       human.rotation.y = 90 * Math.PI/180;
-      human.position.x = -200;
-      human.position.z = -300 * i;
+      human.position.z = -100 * i;
       this.scene.add(human);
       this.humans.push(human);
     }
@@ -81,21 +78,19 @@ class Render {
       human.update(players[i]);
     });
 
-    const firstPlayer = Play.firstPlayer;
-    if (firstPlayer) {
-      // this.camera.position.x = firstPlayer.position.x;
-      // this.camera.lookAt(this.humans[firstPlayer.index].position);
+    this.camera.position.x = Play.camera.position.x + Play.camera.view.width/2;
+
+    if (!this.terrain) {
+      this.terrain = new Terrain(Play.level.walls.children);
+      this.scene.add(this.terrain);
     }
+
   }
 
-  updateTerrain() {
-    console.log('updateLevel', Play.level.walls.children[0])
+  removeTerrain() {
     if (this.terrain) {
       this.scene.remove(this.terrain);
     }
-
-    this.terrain = new Terrain(Play.level.walls.children);
-    this.scene.add(this.terrain);
   }
 }
 

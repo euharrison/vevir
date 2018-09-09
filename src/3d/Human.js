@@ -76,7 +76,7 @@ class Human extends THREE.Group {
 
   update(player) {
     var timerMouth = Date.now() * 0.01;
-    this.mouth.scale.y = MathUtils.map(Math.sin(timerMouth), -1, 1, 0.5, 1);
+    this.mouth.scale.y = MathUtils.map(Math.sin(timerMouth), -1, 1, 0.25, 1);
 
     this.position.x = player.x;
     this.position.y = -player.y;
