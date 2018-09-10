@@ -103,7 +103,6 @@ class Level extends Phaser.Group {
 
     const tileWidth = Config.tileWidth;
     const tileHeight = this.game.world.height / verticalLength;
-console.log(tileHeight )
 
     for (let y = 0; y < verticalLength; y++) {
       for (let x = 0; x < horizontalLength; x++) {
@@ -111,7 +110,7 @@ console.log(tileHeight )
 
           // wall
           case 'x':
-            const wall = this.game.add.sprite(tileWidth * x, tileHeight * y, 'wall');
+            const wall = this.game.add.sprite(tileWidth * x, tileHeight * y, Phaser.Cache.MISSING);
             wall.width = tileWidth;
             wall.height = tileHeight;
             this.walls.add(wall);

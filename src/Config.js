@@ -12,10 +12,10 @@ export default {
   restartTime: 20000,
 
   // tiles amount and sizes
-  verticalTiles: 40,
-  horizontalTiles: 80,
-  tileWidth: 20,
-  tileHeight: 20,
+  verticalTiles: 20,
+  horizontalTiles: 40,
+  tileWidth: 40,
+  tileHeight: 40,
 
   // dimensions of game, keep it low to improve performance
   gameWidth: 1920/2,
