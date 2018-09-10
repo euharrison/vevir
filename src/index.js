@@ -2,7 +2,7 @@ import $ from 'jquery';
 
 import Config from './Config';
 import AudioController from './AudioController';
-import Capture from './capture/Capture';
+import Capture from './game/Capture';
 import Play from './game/Play';
 
 import './scss/style.scss';
