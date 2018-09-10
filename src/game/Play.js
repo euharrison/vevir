@@ -34,15 +34,14 @@ class Play extends Phaser.State {
 
     this.players = this.game.add.group();
     for (let i = 0; i < Config.population; i++) {
-      const player = new Player(i, this.game, this.level);
-      this.players.add(player);
-      player.checkWorldBounds = true;
-      player.events.onOutOfBounds.add(this.killPlayer);
+      this.players.add(
+        new Player(i, this.game, this.level)
+      );
     }
 
     AI.nextGeneration();
 
-    // this.gameTimer = setTimeout(() => this.restart(), 7000);
+    this.gameTimer = setTimeout(() => this.restart(), 2000);
   }
 
   update() {
@@ -68,17 +67,17 @@ class Play extends Phaser.State {
   render() {
     if (Config.devMode) {
       // this.game.debug.text(this.game.time.physicsElapsed, 20, 20);
-      this.game.debug.cameraInfo(this.game.camera, 20, 20);
+      // this.game.debug.cameraInfo(this.game.camera, 20, 20);
 
       // this.game.debug.text(`Score: ${this.focusPlayer() ? this.focusPlayer().score : 0}`, 20, 40);
       // this.game.debug.text(`Max Score: ${this.maxScore}`, 20, 60);
       // this.game.debug.text(`Generation: ${AI.generationAmount}`, 20, 80);
       // this.game.debug.text(`Alives: ${this.players.children.filter(p => p.alive).length}`, 20, 100);
 
-      if (this.firstPlayer) {
+      if (this.focusPlayer()) {
         // this.game.debug.body(this.focusPlayer());
         // this.game.debug.bodyInfo(this.focusPlayer(), 20, 20);
-        this.game.debug.spriteCoords(this.focusPlayer(), 20, 450);
+        // this.game.debug.spriteCoords(this.focusPlayer(), 20, 450);
       }
     }
   }

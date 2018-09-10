@@ -1,5 +1,8 @@
 import * as d3 from 'd3';
 
+import Level3d from '../3d/Level3d';
+import Render from '../3d/Render';
+
 class LevelGenerator extends Phaser.Group {
   constructor(game) {
     super(game);
@@ -7,6 +10,11 @@ class LevelGenerator extends Phaser.Group {
     this.walls = this.game.add.group();
     this.coins = this.game.add.group();
     this.enemies = this.game.add.group();
+
+    this.level3d = new Level3d();
+    Render.scene.add(this.level3d);
+
+    this.onDestroy.add(this.remove3d, this);
   }
 
   create(input) {
@@ -63,6 +71,8 @@ class LevelGenerator extends Phaser.Group {
 
     this.createSprites(level);
 
+    this.level3d.create(this.walls.children);
+
     // Debug
     // console.log(input)
     // console.log(level.map(row => `|${row.join('')}|`).join('\n'));
@@ -117,6 +127,10 @@ class LevelGenerator extends Phaser.Group {
         }
       }
     }
+  }
+
+  remove3d() {
+    Render.scene.remove(this.level3d);
   }
 }
 

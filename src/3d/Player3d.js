@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import MathUtils from '../MathUtils';
 
-class Human extends THREE.Group {
+class Player3d extends THREE.Group {
   constructor() {
     super();
 
@@ -72,20 +72,34 @@ class Human extends THREE.Group {
     this.add( eyeRightDot );
     // human.add( sickEye );
     this.add( this.mouth );
+
+    const scale = 0.5;
+    this.scale.set(scale, scale, scale);
   }
 
   update(player) {
+    this.visible = player.alive;
+
+    if (!this.visible) {
+      return;
+    }
+
     var timerMouth = Date.now() * 0.01;
     this.mouth.scale.y = MathUtils.map(Math.sin(timerMouth), -1, 1, 0.25, 1);
 
     this.position.x = player.x;
     this.position.y = -player.y;
 
-    this.visible = player.alive;
+    const yRot = (player.body.velocity.x < 0 ? -90 : 90) * Math.PI/180;
+    const xRot = MathUtils.map(player.body.deltaY(), 10, -10, 15, -15) * Math.PI/180;
+    const zRot = 0;
 
-    const scale = MathUtils.map(player.score, 0, 200, 0.5, 1);
-    this.scale.set(scale, scale, scale);
+    // https://github.com/mrdoob/three.js/issues/187#issuecomment-1066636
+    this.quaternion.set(0, yRot, 0, 1).normalize();
+    var tmpQuaternion = new THREE.Quaternion();
+    tmpQuaternion.set(xRot, 0, zRot, 1).normalize();
+    this.quaternion.multiply(tmpQuaternion);
   }
 }
 
-export default Human;
+export default Player3d;

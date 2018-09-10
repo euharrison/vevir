@@ -2,8 +2,6 @@ import * as THREE from 'three';
 
 import Config from '../Config';
 import Detector from './Detector';
-import Human from './Human';
-import Terrain from './Terrain';
 import Play from '../game/Play';
 
 if (!Detector.webgl) Detector.addGetWebGLMessage();
@@ -22,17 +20,6 @@ class Render {
     var pointLight = new THREE.PointLight( 0xffffff, 0.8 );
     this.camera.add(pointLight);
     this.scene.add(this.camera);
-
-    //
-
-    this.humans = [];
-    for (let i = 0; i < Config.population; i++) {
-      const human = new Human();
-      human.rotation.y = 90 * Math.PI/180;
-      human.position.z = -100 * i;
-      this.scene.add(human);
-      this.humans.push(human);
-    }
 
     //
 
@@ -73,28 +60,11 @@ class Render {
   }
 
   render() {
-    if (!Play.players || !Play.players.children) {
+    if (!Play || !Play.players || !Play.players.children) {
       return;
     }
 
-    const players = Play.players.children;
-    this.humans.forEach((human, i) => {
-      human.update(players[i]);
-    });
-
     this.camera.position.x = Play.camera.position.x + Play.camera.view.width/2;
-
-    if (!this.terrain) {
-      this.terrain = new Terrain(Play.level.walls.children);
-      this.scene.add(this.terrain);
-    }
-
-  }
-
-  removeTerrain() {
-    if (this.terrain) {
-      this.scene.remove(this.terrain);
-    }
   }
 }
 

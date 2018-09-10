@@ -16,7 +16,6 @@ function onKeyPress(e) {
       break;
     case 'u':
     case 'U':
-      Render.removeTerrain();
       const spectrogram = AudioController.getSpectrogram();
       Play.updateLevel(spectrogram);
       break;

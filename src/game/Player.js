@@ -1,16 +1,20 @@
 import AI from './AI';
 import Config from '../Config';
+import Player3d from '../3d/Player3d';
+import Render from '../3d/Render';
 
 class Player extends Phaser.Sprite {
   constructor(index, game, level) {
-    // super(game, 30 + index*10, 100, 'player');
-    super(game, 30 + index*1, 100, 'player');
+    super(game, 30 + index*10, 100, 'player');
 
     game.physics.arcade.enable(this);
 
     this.body.gravity.y = 1000;
     this.body.maxVelocity.y = 500;
     this.body.setSize(20, 32, 5, 16);
+
+    this.checkWorldBounds = true;
+    this.outOfBoundsKill = true;
 
     this.animations.add('left', [0, 1, 2, 3], 10, true);
     this.animations.add('turn', [4], 20, true);
@@ -26,6 +30,13 @@ class Player extends Phaser.Sprite {
       this.facing = 'left';
       this.cursors = this.game.input.keyboard.createCursorKeys();
     }
+
+    this.player3d = new Player3d();
+    this.player3d.position.z = -100 * index;
+    Render.scene.add(this.player3d);
+
+    this.events.onKilled.add(this.remove3d, this);
+    this.events.onDestroy.add(this.remove3d, this);
   }
 
   update() {
@@ -40,6 +51,8 @@ class Player extends Phaser.Sprite {
     } else {
       this.updateByAI();
     }
+
+    this.player3d.update(this);
   }
 
   updateByHuman() {
@@ -132,6 +145,10 @@ class Player extends Phaser.Sprite {
       goLeft: output[1],
       jump: output[2],
     };
+  }
+
+  remove3d() {
+    Render.scene.remove(this.player3d);
   }
 }
 
