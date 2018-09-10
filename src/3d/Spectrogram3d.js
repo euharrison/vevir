@@ -14,14 +14,14 @@ class Spectrogram3d extends THREE.Group {
       }
 
       const scale = MathUtils.map(value, 0, 200, 0.1, 1);
-      this.children[index].scale.set(scale, scale, scale)
+      this.children[index].scale.set(1, scale, 1);
     })
   }
 
   createBar(index) {
-    const width = 30;
-    const height = 1000;
-    
+    const width = 50;
+    const height = 50 * 100;
+
     const geometry = new THREE.BoxBufferGeometry(width, height, width);
 
     const hue = MathUtils.map(index, 0, this.dataSize, 0, 255);
@@ -33,7 +33,7 @@ class Spectrogram3d extends THREE.Group {
     });
 
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.x = (index - (this.dataSize/2)) * (width + 1);
+    mesh.position.x = (index - (this.dataSize/2)) * (width * 1.5);
     mesh.position.y = 0;
     mesh.position.z = 0;
     this.add(mesh);

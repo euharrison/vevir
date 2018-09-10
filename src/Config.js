@@ -15,19 +15,23 @@ const config = {
   population: 20,
 
   // time to auto restart level
-  restartTime: 10,
+  restartTime: 15,
 
   // tiles amount and sizes
-  verticalTiles: 20,
-  horizontalTiles: 40,
-  tileWidth: 40,
-  tileHeight: 40,
+  verticalTiles: 80,
+  horizontalTiles: 80,
+  tileWidth: 80,
+  tileHeight: 10,
   tileDepth: 60,
   tileDepthMargin: 200,
 
   // dimensions of game, keep it low to improve performance
   gameWidth: 1920/2,
   gameHeight: 1080/2,
+
+  // how faster player can move
+  playerVelocity: 400,
+  playerJump: 500,
 }
 
 const params = new URLSearchParams(window.location.search);

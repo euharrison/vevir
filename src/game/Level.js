@@ -58,7 +58,10 @@ class Level extends Phaser.Group {
       level[y] = [];
       for (let x = 0; x < horizontalLength; x++) {
         const crop = verticalLength - horizontalValues[x] - 1;
-        if (y > crop) {
+        if (x < 2 && y === maxFloorHeight) {
+          level[y][x] = 'x';
+        }
+        else if (y > crop) {
           const ceil = Math.ceil(crop);
           if (y === ceil || y === ceil+1) {
             level[y][x] = 'x';
@@ -66,12 +69,12 @@ class Level extends Phaser.Group {
             level[y][x] = ' ';
           }
         }
-        else if (y > verticalLength - horizontalValues[x] - 2) {
-          level[y][x] = x > 10 && Math.random() < 0.025 ? '!' : ' ';
+        else if (y > verticalLength - horizontalValues[x] - 2 && x % 2 === 0) {
+          level[y][x] = x > 10 && Math.random() < 0.2 ? '!' : ' ';
           // level[y][x] = ' ';
         }
-        else if (y > verticalLength - horizontalValues[x] - 3) {
-          level[y][x] = Math.random() < 0.05 ? 'o' : ' ';
+        else if (y > verticalLength - horizontalValues[x] - 3 && x % 2 === 1) {
+          level[y][x] = Math.random() < 0.2 ? 'o' : ' ';
           // if (x > 70) {
           //   level[y][x] = hasCoin ? ' ' : 'o';
           //   hasCoin = true;
@@ -149,7 +152,8 @@ class Level extends Phaser.Group {
     this.coins[index].killAll();
     this.enemies[index].killAll();
 
-    this.level3d.removeSimulation(index);
+    // TODO pensar numa maneira mais suave de remover o level, dá um impacto visual muito grande
+    // this.level3d.removeSimulation(index);
   }
 
   onRemove() {

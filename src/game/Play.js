@@ -58,6 +58,8 @@ class Play extends Phaser.State {
       this.game.camera.follow(this.firstPlayer, undefined, 0.05, 0.05);
     }
 
+    // TODO verificar se o first player está muito tempo parado no msm lugar, se sim, restart
+
     Scene3d.updateCameraPlay(this);
   }
 

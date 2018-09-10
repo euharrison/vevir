@@ -5,7 +5,8 @@ class AI {
 		this.generationAmount = 0;
 		this.neuvol = new Neuroevolution({
 			population: Config.population < 2 ? 2 : Config.population,
-			network: [2, [2], 3],
+			// network: [2, [2], 3],
+			network: [2, [2], 1],
 		});
 	}
 

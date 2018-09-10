@@ -5,7 +5,7 @@ import Scene3d from '../3d/Scene3d';
 
 class Player extends Phaser.Sprite {
   constructor(index, game, level) {
-    super(game, 50, 100);
+    super(game, 50, 300);
 
     this.width = 20;
     this.height = 30;
@@ -55,17 +55,17 @@ class Player extends Phaser.Sprite {
   }
 
   updateByHuman() {
-    if (this.cursors.left.isDown) {
-      this.body.velocity.x = -150;
+    if (this.cursors.right.isDown) {
+      this.body.velocity.x = Config.playerVelocity;
     }
-    else if (this.cursors.right.isDown) {
-      this.body.velocity.x = 150;
+    else if (this.cursors.left.isDown) {
+      this.body.velocity.x = -Config.playerVelocity;
     }
 
     // TODO usar o player.body.onFloor()
     if (this.cursors.up.isDown && this.body.touching.down && this.game.time.now > this.jumpTimer) {
-      this.body.velocity.y = -500;
-      this.jumpTimer = this.game.time.now + 750;
+      this.body.velocity.y = -Config.playerJump;
+      this.jumpTimer = this.game.time.now + (Config.playerJump * 1.5);
     }
   }
 
@@ -73,16 +73,16 @@ class Player extends Phaser.Sprite {
     const brain = this.computeAI();
 
     if (brain.goRight && !brain.goLeft) {
-      this.body.velocity.x = 150;
+      this.body.velocity.x = Config.playerVelocity;
     }
     
     if (brain.goLeft && !brain.goRight) {
-      this.body.velocity.x = -150;
+      this.body.velocity.x = -Config.playerVelocity;
     }
 
     if (brain.jump && this.body.touching.down && this.game.time.now > this.jumpTimer) {
-      this.body.velocity.y = -500;
-      this.jumpTimer = this.game.time.now + 750;
+      this.body.velocity.y = -Config.playerJump;
+      this.jumpTimer = this.game.time.now + (Config.playerJump * 1.5);
     }
   }
 
@@ -104,9 +104,12 @@ class Player extends Phaser.Sprite {
     const coinDistanceX = (coinX - playerX) / this.game.world.width;
     const coinDistanceY = (coinY - playerY) / this.game.world.height;
 
+    // TODO entender melhor o comportamento da rede, pois nemo Math.random está deixando "aleatório"
     const input = [
-      coinDistanceX,
-      coinDistanceY,
+      Math.random(),
+      Math.random(),
+      // coinDistanceX,
+      // coinDistanceY,
       // can jump
     ];
 
@@ -117,14 +120,15 @@ class Player extends Phaser.Sprite {
     }
 
     return {
-      goRight: output[0],
-      goLeft: output[1],
-      jump: output[2],
+      goRight: true, //output[0],
+      goLeft: false, //output[1],
+      jump: output[0], //output[2],
     };
   }
 
   onRemove() {
-    AI.setScore(this.index, this.score);
+    // TODO usar a position.x e a quantidade de moedas como score
+    AI.setScore(this.index, this.position.x);
 
     Scene3d.remove(this.player3d);
     this.level.removeSimulation(this.index);

@@ -56,7 +56,7 @@ class Scene3d extends THREE.Scene {
   }
 
   updateCameraCapture() {
-    this.camera.position.set(0, 0, 2500);
+    this.camera.position.set(0, 0, 8000);
     this.camera.rotation.set(0, 0, 0);
   }
 
@@ -72,10 +72,12 @@ class Scene3d extends THREE.Scene {
     this.camera.position.x = play.camera.position.x + play.camera.view.width/2 + 100;
     this.camera.position.y = -play.camera.position.y - play.camera.view.height/2 + 300;
 
-    const frontPlayer = play.players.children.find(p => p.alive);
-    const index = frontPlayer ? frontPlayer.index : 0;
-    const camZ = -index * (Config.tileDepth + Config.tileDepthMargin) + 800;
-    this.camera.position.z += (camZ - this.camera.position.z) * 0.02;
+    // TODO pensar numa maneira mais suave de mover a camera, dá um impacto visual muito grande
+    // const frontPlayer = play.players.children.find(p => p.alive);
+    // const index = frontPlayer ? frontPlayer.index : 0;
+    // const camZ = -index * (Config.tileDepth + Config.tileDepthMargin) + 800;
+    // this.camera.position.z += (camZ - this.camera.position.z) * 0.02;
+    this.camera.position.z = 800;
   }
 }
 

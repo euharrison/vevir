@@ -9,7 +9,9 @@ class ColorManager {
   shuffle() {
     const availableColors = 8;
     for (let i = 0; i < Config.population; i++) {
-      this.colors[i] = Math.floor(Math.random()*availableColors) * (256/availableColors);
+      // TODO definir um padrão de cores visual harmonico
+      // this.colors[i] = Math.floor(Math.random()*availableColors) * (256/availableColors);
+      this.colors[i] = Math.floor(availableColors*i/Config.population) * (256/availableColors);
     }
   }
 
