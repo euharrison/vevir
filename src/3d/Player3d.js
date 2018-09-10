@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import Config from '../Config'
 import ColorManager from './ColorManager';
-import MathUtils from '../MathUtils'
+import MathUtils from './MathUtils'
 
 class Player3d extends THREE.Group {
   constructor(index) {

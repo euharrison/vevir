@@ -1,7 +1,6 @@
 import $ from 'jquery';
 
 import Config from './Config';
-import AudioController from './AudioController';
 import Capture from './game/Capture';
 import Play from './game/Play';
 
@@ -22,8 +21,12 @@ const boot = {
   },
   create: function() {
     game.state.start('capture');
+    // game.state.start('play');
   },
 }
+
+// first audio sample
+game.spectrogram = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 10, 8, 12, 0, 0];
 
 game.state.add('boot', boot);
 game.state.add('capture', Capture);
@@ -38,16 +41,19 @@ $(window).on('keypress', onKeyPress);
 function onKeyPress(e) {
   switch(e.key) {
     case ' ':
-      game.state.start('capture');
+      if (game.state.current === 'capture') {
+        game.state.start('play');
+      } else {
+        game.state.start('capture');
+      }
       break;
     case 'r':
     case 'R':
-      Play.restart();
-      break;
-    case 'u':
-    case 'U':
-      const spectrogram = AudioController.getSpectrogram();
-      Play.updateLevel(spectrogram);
+      if (game.state.current === 'capture') {
+        game.state.start('play');
+      } else {
+        Play.restart();
+      }
       break;
   }
 }

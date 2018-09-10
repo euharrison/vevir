@@ -1,3 +1,5 @@
+import Config from '../Config';
+
 // Older browsers might not implement mediaDevices at all, so we set an empty object first
 if (navigator.mediaDevices === undefined) {
   navigator.mediaDevices = {};
@@ -47,7 +49,7 @@ if (navigator.mediaDevices.getUserMedia) {
           source = audioCtx.createMediaStreamSource(stream);
           source.connect(analyser);
           
-          analyser.fftSize = 256 * 16;
+          analyser.fftSize = Config.fftSize;
           const bufferLength = analyser.frequencyBinCount;
           const dataArray = new Uint8Array(bufferLength);
 
@@ -56,8 +58,8 @@ if (navigator.mediaDevices.getUserMedia) {
 
             analyser.getByteFrequencyData(dataArray);
 
-            // const humanCommonVoiceFrequency = 2.5; // magic number
-            const humanCommonVoiceFrequency = 1; // magic number
+            const humanCommonVoiceFrequency = 2.5; // magic number
+            // const humanCommonVoiceFrequency = 1; // magic number
             const humanBufferLength = bufferLength / humanCommonVoiceFrequency;
 
             spectrogram = [];

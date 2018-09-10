@@ -1,6 +1,12 @@
 const config = {
-  // hide debugs and improve performance
+  // ignore phaser render engine for better performance
   devMode: false,
+
+  // show fps rate
+  showFPS: false,
+
+  // fftSize for audio buffer length
+  fftSize: 256 * 2,
 
   // enable it to control one player
   humanControl: false,
@@ -9,7 +15,7 @@ const config = {
   population: 20,
 
   // time to auto restart level
-  restartTime: 20,
+  restartTime: 10,
 
   // tiles amount and sizes
   verticalTiles: 20,

@@ -3,13 +3,13 @@ import AI from './AI';
 import Player from './Player';
 import Level from './Level';
 import ColorManager from '../3d/ColorManager';
+import Scene3d from '../3d/Scene3d';
 
 class Play extends Phaser.State {
   constructor() {
     super();
     this.key = 'play';
     this.maxScore = 0;
-    this.levelInput = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 10, 8, 12, 0, 0];
   }
 
   create() {
@@ -19,7 +19,7 @@ class Play extends Phaser.State {
 
     ColorManager.shuffle();
 
-    this.level = new Level(this.game, this.levelInput);
+    this.level = new Level(this.game, this.game.spectrogram);
 
     this.players = this.game.add.group();
     for (let i = 0; i < Config.population; i++) {
@@ -57,25 +57,25 @@ class Play extends Phaser.State {
     } else {
       this.game.camera.follow(this.firstPlayer, undefined, 0.05, 0.05);
     }
+
+    Scene3d.updateCameraPlay(this);
   }
 
   render() {
-    if (Config.devMode) {
-      this.game.debug.text(this.game.time.fps, 0, 40);
+    this.game.debug.text(this.game.time.fps, 0, 40);
 
-      // this.game.debug.text(this.game.time.physicsElapsed, 20, 20);
-      this.game.debug.cameraInfo(this.game.camera, 20, 20);
+    // this.game.debug.text(this.game.time.physicsElapsed, 20, 20);
+    this.game.debug.cameraInfo(this.game.camera, 20, 20);
 
-      // this.game.debug.text(`Score: ${this.firstPlayer ? this.firstPlayer.score : 0}`, 20, 40);
-      // this.game.debug.text(`Max Score: ${this.maxScore}`, 20, 60);
-      // this.game.debug.text(`Generation: ${AI.generationAmount}`, 20, 80);
-      // this.game.debug.text(`Alives: ${this.players.children.filter(p => p.alive).length}`, 20, 100);
+    // this.game.debug.text(`Score: ${this.firstPlayer ? this.firstPlayer.score : 0}`, 20, 40);
+    // this.game.debug.text(`Max Score: ${this.maxScore}`, 20, 60);
+    // this.game.debug.text(`Generation: ${AI.generationAmount}`, 20, 80);
+    // this.game.debug.text(`Alives: ${this.players.children.filter(p => p.alive).length}`, 20, 100);
 
-      if (this.firstPlayer) {
-        // this.game.debug.body(this.firstPlayer);
-        // this.game.debug.bodyInfo(this.firstPlayer, 20, 20);
-        // this.game.debug.spriteCoords(this.firstPlayer, 20, 450);
-      }
+    if (this.firstPlayer) {
+      // this.game.debug.body(this.firstPlayer);
+      // this.game.debug.bodyInfo(this.firstPlayer, 20, 20);
+      // this.game.debug.spriteCoords(this.firstPlayer, 20, 450);
     }
   }
 
@@ -92,11 +92,6 @@ class Play extends Phaser.State {
   restart() {
     clearTimeout(this.gameTimer);
     this.game.state.restart();
-  }
-
-  updateLevel(input) {
-    this.levelInput = input;
-    this.restart();
   }
 }
 
