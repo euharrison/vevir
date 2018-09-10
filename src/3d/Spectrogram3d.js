@@ -7,7 +7,6 @@ import MathUtils from './MathUtils';
 class Spectrogram3d extends THREE.Group {
   update(data) {
     this.dataSize = data.length;
-    console.log(this.dataSize)
 
     data.forEach((value, index) => {
       if (!this.children[index]) {

@@ -55,7 +55,7 @@ class Scene3d extends THREE.Scene {
     }
   }
 
-  updateCameraCapture(capture) {
+  updateCameraCapture() {
     this.camera.position.set(0, 0, 2500);
     this.camera.rotation.set(0, 0, 0);
   }

@@ -10,17 +10,19 @@ class Capture extends Phaser.State {
   }
 
   create() {
-    setTimeout(() => this.finish(), 20000);
+    this.game.spectrogram = Audio.getSpectrogram();
 
-    this.spectrogram3d = new Spectrogram3d();
-    Scene3d.add(this.spectrogram3d);
+    this.spec3d = new Spectrogram3d(this.game.spectrogram.length);
+    Scene3d.add(this.spec3d);
+
+    Scene3d.updateCameraCapture();
+
+    this.finishTimerId = setTimeout(() => this.finish(), 20 * 1000);
   }
 
   update() {
     this.game.spectrogram = Audio.getSpectrogram();
-    this.spectrogram3d.update(this.game.spectrogram);
-
-    Scene3d.updateCameraCapture(this);
+    this.spec3d.update(this.game.spectrogram);
   }
 
   render() {
@@ -32,7 +34,8 @@ class Capture extends Phaser.State {
   }
 
   shutdown() {
-    Scene3d.remove(this.spectrogram3d);
+    clearInterval(this.finishTimerId);
+    Scene3d.remove(this.spec3d);
   }
 }
 
