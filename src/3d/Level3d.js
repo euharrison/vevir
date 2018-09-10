@@ -3,10 +3,13 @@ import * as THREE from 'three';
 import Config from '../Config';
 
 class Level3d extends THREE.Group {
-  create(tiles) {
-    var material = new THREE.MeshPhongMaterial( { 
-      // color: new THREE.Color(`hsl(${humanHue}, 100%, 50%)`),
-      color: new THREE.Color(`hsl(150, 100%, 50%)`),
+  constructor(tiles) {
+    super();
+
+    const hue = Math.random() * 255;
+
+    const material = new THREE.MeshPhongMaterial( { 
+      color: new THREE.Color(`hsl(${hue}, 100%, 50%)`),
       shininess: 30,
       flatShading: true,
     } );

@@ -13,9 +13,9 @@ class Play extends Phaser.State {
 
   preload() {
     this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    this.game.time.advancedTiming = true;
 
     this.game.load.spritesheet('player', 'assets/images/dude.png', 32, 48);
-    this.game.load.image('background', 'assets/images/background2.png');
 
     this.game.load.image('wall', 'img/wall.png');
     this.game.load.image('coin', 'img/bird.png');
@@ -27,10 +27,7 @@ class Play extends Phaser.State {
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'background');
-
-    this.level = new Level(this.game);
-    this.level.create(this.levelInput);
+    this.level = new Level(this.game, this.levelInput);
 
     this.players = this.game.add.group();
     for (let i = 0; i < Config.population; i++) {
@@ -41,13 +38,16 @@ class Play extends Phaser.State {
 
     AI.nextGeneration();
 
-    this.gameTimer = setTimeout(() => this.restart(), 2000);
+    this.gameTimer = setTimeout(() => this.restart(), Config.restartTime);
   }
 
   update() {
     this.game.physics.arcade.collide(this.players, this.level.walls);
-    this.game.physics.arcade.overlap(this.players, this.level.coins, this.takeCoin, null, this);
-    this.game.physics.arcade.overlap(this.players, this.level.enemies, this.killPlayer, null, this);
+
+    for (let i = 0; i < Config.population; i++) {
+      this.game.physics.arcade.overlap(this.players.children[i], this.level.coins[i], this.takeCoin, null, this);
+      this.game.physics.arcade.overlap(this.players.children[i], this.level.enemies[i], this.killPlayer, null, this);
+    }
 
     this.firstPlayer = null;
     this.players.children.forEach(player => {
@@ -66,6 +66,8 @@ class Play extends Phaser.State {
 
   render() {
     if (Config.devMode) {
+      game.debug.text(this.game.time.fps, 0, 40);   
+
       // this.game.debug.text(this.game.time.physicsElapsed, 20, 20);
       // this.game.debug.cameraInfo(this.game.camera, 20, 20);
 
@@ -88,13 +90,13 @@ class Play extends Phaser.State {
 
   takeCoin(player, coin) {
     // console.log('takeCoin', player, coin)
-    // coin.kill();
+    coin.kill();
     player.score++;
     this.maxScore = Math.max(this.maxScore, player.score);
   }
 
-  killPlayer(player, coin) {
-    // console.log('killPlayer', player, coin)
+  killPlayer(player, enemy) {
+    // console.log('killPlayer', player, enemy)
     player.kill();
   }
 

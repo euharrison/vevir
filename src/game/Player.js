@@ -7,7 +7,7 @@ class Player extends Phaser.Sprite {
   constructor(index, game, level) {
     super(game, 30 + index*10, 100, 'player');
 
-    game.physics.arcade.enable(this);
+    this.game.physics.arcade.enable(this);
 
     this.body.gravity.y = 1000;
     this.body.maxVelocity.y = 500;
@@ -121,7 +121,7 @@ class Player extends Phaser.Sprite {
     const playerY = this.position.y;
 
     // TODO pegar a coin mais perto
-    const coin = this.level.coins.children[0];
+    const coin = { position:{ x: 100, y: 100 } };//this.level.coins.children[0];
     const coinX = coin.position.x;
     const coinY = coin.position.y;
 

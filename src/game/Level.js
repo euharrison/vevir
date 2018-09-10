@@ -1,17 +1,27 @@
 import * as d3 from 'd3';
 
+import Config from '../Config';
+import Coin from './Coin';
+import Enemy from './Enemy';
 import Level3d from '../3d/Level3d';
 import Scene3d from '../3d/Scene3d';
 
 class Level extends Phaser.Group {
-  constructor(game) {
+  constructor(game, input) {
     super(game);
 
     this.walls = this.game.add.group();
-    this.coins = this.game.add.group();
-    this.enemies = this.game.add.group();
 
-    this.level3d = new Level3d();
+    this.coins = [];
+    this.enemies = [];
+    for (let i = 0; i < Config.population; i++) {
+      this.coins.push(this.game.add.group());
+      this.enemies.push(this.game.add.group());
+    }
+
+    this.create(input);
+
+    this.level3d = new Level3d(this.walls.children);
     Scene3d.add(this.level3d);
 
     this.onDestroy.add(this.remove3d, this);
@@ -51,17 +61,17 @@ class Level extends Phaser.Group {
           level[y][x] = 'x';
         }
         else if (y > verticalLength - horizontalValues[x] - 2) {
-          // level[y][x] = Math.random() < 0.05 ? '!' : ' ';
-          level[y][x] = ' ';
+          level[y][x] = x > 10 && Math.random() < 0.025 ? '!' : ' ';
+          // level[y][x] = ' ';
         }
         else if (y > verticalLength - horizontalValues[x] - 3) {
-          // level[y][x] = Math.random() < 0.1 ? 'o' : ' ';
-          if (x > 70) {
-            level[y][x] = hasCoin ? ' ' : 'o';
-            hasCoin = true;
-          } else {
-            level[y][x] = ' ';
-          }
+          level[y][x] = Math.random() < 0.05 ? 'o' : ' ';
+          // if (x > 70) {
+          //   level[y][x] = hasCoin ? ' ' : 'o';
+          //   hasCoin = true;
+          // } else {
+          //   level[y][x] = ' ';
+          // }
         }
         else {
           level[y][x] = ' ';//'o';
@@ -70,8 +80,6 @@ class Level extends Phaser.Group {
     }
 
     this.createSprites(level);
-
-    this.level3d.create(this.walls.children);
 
     // Debug
     // console.log(input)
@@ -113,16 +121,18 @@ class Level extends Phaser.Group {
 
           // coin
           case 'o':
-            const coin = this.game.add.sprite(tileWidth * x, tileHeight * y, 'coin');
-            this.coins.add(coin);
-            this.game.physics.arcade.enable(coin);
+            for (let i = 0; i < Config.population; i++) {
+              const coin = new Coin(this.game, i, tileWidth * x, tileHeight * y);
+              this.coins[i].add(coin);
+            }
             break;
 
           // enemy
           case '!':
-            const enemy = this.game.add.sprite(tileWidth * x, tileHeight * y, 'enemy');
-            this.enemies.add(enemy);
-            this.game.physics.arcade.enable(enemy);
+            for (let i = 0; i < Config.population; i++) {
+              const enemy = new Enemy(this.game, i, tileWidth * x, tileHeight * y);
+              this.enemies[i].add(enemy);
+            }
             break;
         }
       }
