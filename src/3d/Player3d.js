@@ -8,7 +8,7 @@ class Player3d extends THREE.Group {
 
     const humanHue = Math.random() * 255;
 
-    var material = new THREE.MeshPhongMaterial( { 
+    const material = new THREE.MeshPhongMaterial( { 
       color: new THREE.Color(`hsl(${humanHue}, 100%, 50%)`),
       shininess: 30,
       flatShading: true,
@@ -18,7 +18,7 @@ class Player3d extends THREE.Group {
     // obheadject.position.set( -300, 0, 200 );
     // scene.add( head );
 
-    var eyeMaterial = new THREE.MeshPhongMaterial( { 
+    const eyeMaterial = new THREE.MeshPhongMaterial( { 
       color: 0xffffff,
       shininess: 30,
       flatShading: true,
@@ -32,7 +32,7 @@ class Player3d extends THREE.Group {
     eyeRight.rotation.x = Math.PI/2;
     eyeRight.position.set( 35, 25, 70 );
 
-    var eyeDotMaterial = new THREE.MeshPhongMaterial( { 
+    const eyeDotMaterial = new THREE.MeshPhongMaterial( { 
       color: 0x000000,
       shininess: 30,
       flatShading: true,
@@ -46,7 +46,7 @@ class Player3d extends THREE.Group {
     eyeRightDot.rotation.x = Math.PI/2;
     eyeRightDot.position.set( 35, 25, 100 );
 
-    var sickEyeMaterial = new THREE.MeshPhongMaterial( { 
+    const sickEyeMaterial = new THREE.MeshPhongMaterial( { 
       color: 0xff0000,
       shininess: 30,
       flatShading: true,
@@ -55,7 +55,7 @@ class Player3d extends THREE.Group {
     const sickEye = new THREE.Mesh( new THREE.SphereBufferGeometry( 40, 10, 7 ), sickEyeMaterial );
     sickEye.position.set( 35, 25, 70 );
 
-    var mouthMaterial = new THREE.MeshPhongMaterial( { 
+    const mouthMaterial = new THREE.MeshPhongMaterial( { 
       color: new THREE.Color(`hsl(${humanHue}, 50%, 50%)`),
       shininess: 30,
       flatShading: true,
@@ -84,7 +84,7 @@ class Player3d extends THREE.Group {
       return;
     }
 
-    var timerMouth = Date.now() * 0.01;
+    const timerMouth = Date.now() * 0.01;
     this.mouth.scale.y = MathUtils.map(Math.sin(timerMouth), -1, 1, 0.25, 1);
 
     this.position.x = player.x;
@@ -96,7 +96,7 @@ class Player3d extends THREE.Group {
 
     // https://github.com/mrdoob/three.js/issues/187#issuecomment-1066636
     this.quaternion.set(0, yRot, 0, 1).normalize();
-    var tmpQuaternion = new THREE.Quaternion();
+    const tmpQuaternion = new THREE.Quaternion();
     tmpQuaternion.set(xRot, 0, zRot, 1).normalize();
     this.quaternion.multiply(tmpQuaternion);
   }

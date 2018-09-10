@@ -14,16 +14,10 @@ class Play extends Phaser.State {
   preload() {
     this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     this.game.time.advancedTiming = true;
-
-    this.game.load.spritesheet('player', 'assets/images/dude.png', 32, 48);
-
-    this.game.load.image('wall', 'img/wall.png');
-    this.game.load.image('coin', 'img/bird.png');
-    this.game.load.image('enemy', 'img/enemy.png');
   }
 
   create() {
-    this.game.world.setBounds(0, 0, this.game.width * Config.levelWidth, this.game.height);
+    this.game.world.setBounds(0, 0, Config.tileWidth*Config.horizontalTiles, Config.tileHeight*Config.verticalTiles);
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 

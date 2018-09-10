@@ -11,10 +11,13 @@ export default {
   // time to auto restart level
   restartTime: 20000,
 
+  // tiles amount and sizes
+  verticalTiles: 40,
+  horizontalTiles: 80,
+  tileWidth: 20,
+  tileHeight: 20,
+
   // dimensions of game, keep it low to improve performance
   gameWidth: 1920/2,
   gameHeight: 1080/2,
-
-  // width of level in viewport units
-  levelWidth: 1,
 }

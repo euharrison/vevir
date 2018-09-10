@@ -61,7 +61,7 @@ if (navigator.mediaDevices.getUserMedia) {
             const humanBufferLength = bufferLength / humanCommonVoiceFrequency;
 
             spectrogram = [];
-            for (var i = 0; i < humanBufferLength; i++) {
+            for (let i = 0; i < humanBufferLength; i++) {
               spectrogram.push(dataArray[i]);
             }
           }

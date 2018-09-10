@@ -30,8 +30,8 @@ class Level extends Phaser.Group {
   create(input) {
     const level = [];
 
-    const verticalLength = 20;
-    const horizontalLength = 100;
+    const verticalLength = Config.verticalTiles;
+    const horizontalLength = Config.horizontalTiles;
 
     const maxInput = input.reduce((result, i) => Math.max(result, i));
     const maxFloorHeight = verticalLength / 2;
@@ -54,9 +54,9 @@ class Level extends Phaser.Group {
     const horizontalValues = new Array(horizontalLength).fill(0).map((v, index) => scaleHorizontalValue(index))
 
     let hasCoin = false;
-    for (var y = 0; y < verticalLength; y++) {
+    for (let y = 0; y < verticalLength; y++) {
       level[y] = [];
-      for (var x = 0; x < horizontalLength; x++) {
+      for (let x = 0; x < horizontalLength; x++) {
         if (y > verticalLength - horizontalValues[x] - 1) {
           level[y][x] = 'x';
         }
@@ -101,11 +101,12 @@ class Level extends Phaser.Group {
     const horizontalLength = level[0].length;
     const verticalLength = level.length;
 
-    const tileWidth = this.game.world.width / horizontalLength;
+    const tileWidth = Config.tileWidth;
     const tileHeight = this.game.world.height / verticalLength;
+console.log(tileHeight )
 
-    for (var y = 0; y < verticalLength; y++) {
-      for (var x = 0; x < horizontalLength; x++) {
+    for (let y = 0; y < verticalLength; y++) {
+      for (let x = 0; x < horizontalLength; x++) {
         switch (level[y][x]) {
 
           // wall

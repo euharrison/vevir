@@ -3,7 +3,10 @@ import Scene3d from '../3d/Scene3d';
 
 class Enemy extends Phaser.Sprite {
   constructor(game, index, x, y) {
-    super(game, x, y, 'enemy');
+    super(game, x, y);
+
+    this.width = 30;
+    this.height = 30;
 
     this.game.physics.arcade.enable(this);
 
@@ -12,6 +15,14 @@ class Enemy extends Phaser.Sprite {
 
     this.events.onKilled.add(this.remove3d, this);
     this.events.onDestroy.add(this.remove3d, this);
+  }
+
+  update() {
+    if (!this.alive) {
+      return;
+    }
+
+    this.game.debug.body(this, '#ff0000');
   }
 
   remove3d() {

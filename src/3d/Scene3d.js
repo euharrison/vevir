@@ -11,13 +11,13 @@ class Scene3d extends THREE.Scene {
     super();
 
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 20000);
-    this.camera.position.z = 800 * 2;
+    this.camera.position.z = 800 * 1;
     this.camera.rotation.x = -10 * Math.PI/180;
 
-    var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
+    const ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
     this.add(ambientLight);
 
-    var pointLight = new THREE.PointLight( 0xffffff, 0.8 );
+    const pointLight = new THREE.PointLight(0xffffff, 0.8);
     this.camera.add(pointLight);
     this.add(this.camera);
 
@@ -64,7 +64,8 @@ class Scene3d extends THREE.Scene {
       return;
     }
 
-    this.camera.position.x = Play.camera.position.x + Play.camera.view.width/2;
+    this.camera.position.x = Play.camera.position.x + Play.camera.view.width/2 - 100;
+    this.camera.position.y = -Play.camera.position.y - Play.camera.view.height/2 + 200;
   }
 }
 
