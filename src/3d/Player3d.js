@@ -1,28 +1,30 @@
 import * as THREE from 'three';
 
-import MathUtils from '../MathUtils';
+import Config from '../Config'
+import ColorManager from './ColorManager';
+import MathUtils from '../MathUtils'
 
 class Player3d extends THREE.Group {
-  constructor() {
+  constructor(index) {
     super();
 
-    const humanHue = Math.random() * 255;
+    const hue = ColorManager.get(index);
 
-    const material = new THREE.MeshPhongMaterial( { 
-      color: new THREE.Color(`hsl(${humanHue}, 100%, 50%)`),
+    const material = new THREE.MeshPhongMaterial({ 
+      color: new THREE.Color(`hsl(${hue}, 50%, 50%)`),
       shininess: 30,
       flatShading: true,
-    } );
+    });
     
     const head = new THREE.Mesh( new THREE.SphereBufferGeometry( 100, 10, 7 ), material );
     // obheadject.position.set( -300, 0, 200 );
     // scene.add( head );
 
-    const eyeMaterial = new THREE.MeshPhongMaterial( { 
+    const eyeMaterial = new THREE.MeshPhongMaterial({ 
       color: 0xffffff,
       shininess: 30,
       flatShading: true,
-    } );
+    });
 
     const eyeLeft = new THREE.Mesh( new THREE.SphereBufferGeometry( 40, 10, 7 ), eyeMaterial );
     eyeLeft.rotation.x = Math.PI/2;
@@ -32,11 +34,11 @@ class Player3d extends THREE.Group {
     eyeRight.rotation.x = Math.PI/2;
     eyeRight.position.set( 35, 25, 70 );
 
-    const eyeDotMaterial = new THREE.MeshPhongMaterial( { 
+    const eyeDotMaterial = new THREE.MeshPhongMaterial({ 
       color: 0x000000,
       shininess: 30,
       flatShading: true,
-    } );
+    });
 
     const eyeLeftDot = new THREE.Mesh( new THREE.SphereBufferGeometry( 11, 10, 7 ), eyeDotMaterial );
     eyeLeftDot.rotation.x = Math.PI/2;
@@ -46,20 +48,20 @@ class Player3d extends THREE.Group {
     eyeRightDot.rotation.x = Math.PI/2;
     eyeRightDot.position.set( 35, 25, 100 );
 
-    const sickEyeMaterial = new THREE.MeshPhongMaterial( { 
+    const sickEyeMaterial = new THREE.MeshPhongMaterial({ 
       color: 0xff0000,
       shininess: 30,
       flatShading: true,
-    } );
+    });
 
     const sickEye = new THREE.Mesh( new THREE.SphereBufferGeometry( 40, 10, 7 ), sickEyeMaterial );
     sickEye.position.set( 35, 25, 70 );
 
-    const mouthMaterial = new THREE.MeshPhongMaterial( { 
-      color: new THREE.Color(`hsl(${humanHue}, 50%, 50%)`),
+    const mouthMaterial = new THREE.MeshPhongMaterial({ 
+      color: new THREE.Color(`hsl(${hue}, 50%, 50%)`),
       shininess: 30,
       flatShading: true,
-    } );
+    });
 
     this.mouth = new THREE.Mesh( new THREE.TorusBufferGeometry( 20, 10, 10, 10 ), mouthMaterial );
     this.mouth.rotation.x = 30 * Math.PI/180;
@@ -73,8 +75,10 @@ class Player3d extends THREE.Group {
     // human.add( sickEye );
     this.add( this.mouth );
 
-    const scale = 0.5;
+    const scale = 0.3;
     this.scale.set(scale, scale, scale);
+
+    this.position.z = -index * (Config.tileDepth + Config.tileDepthMargin);
   }
 
   update(player) {

@@ -57,8 +57,14 @@ class Level extends Phaser.Group {
     for (let y = 0; y < verticalLength; y++) {
       level[y] = [];
       for (let x = 0; x < horizontalLength; x++) {
-        if (y > verticalLength - horizontalValues[x] - 1) {
-          level[y][x] = 'x';
+        const crop = verticalLength - horizontalValues[x] - 1;
+        if (y > crop) {
+          const ceil = Math.ceil(crop);
+          if (y === ceil || y === ceil+1) {
+            level[y][x] = 'x';
+          } else {
+            level[y][x] = ' ';
+          }
         }
         else if (y > verticalLength - horizontalValues[x] - 2) {
           level[y][x] = x > 10 && Math.random() < 0.025 ? '!' : ' ';
@@ -137,6 +143,13 @@ class Level extends Phaser.Group {
         }
       }
     }
+  }
+
+  removeSimulation(index) {
+    this.coins[index].killAll();
+    this.enemies[index].killAll();
+
+    this.level3d.removeSimulation(index);
   }
 
   remove3d() {

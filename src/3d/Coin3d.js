@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+import Config from '../Config';
+
 class Coin3d extends THREE.Group {
   constructor(coin, index) {
     super();
@@ -12,10 +14,10 @@ class Coin3d extends THREE.Group {
 
     const tileDepth = 100;
 
-    const mesh = new THREE.Mesh(new THREE.SphereBufferGeometry(20, 10, 2), material);
+    const mesh = new THREE.Mesh(new THREE.SphereBufferGeometry(20, 4, 2), material);
     mesh.position.x = coin.position.x;
     mesh.position.y = -coin.position.y;
-    mesh.position.z = -index * tileDepth;
+    mesh.position.z = -index * (Config.tileDepth + Config.tileDepthMargin);
     this.add(mesh);
   }
 }

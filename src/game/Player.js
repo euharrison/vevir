@@ -5,7 +5,7 @@ import Scene3d from '../3d/Scene3d';
 
 class Player extends Phaser.Sprite {
   constructor(index, game, level) {
-    super(game, 30 + index*10, 100);
+    super(game, 50, 100);
 
     this.width = 20;
     this.height = 30;
@@ -29,8 +29,7 @@ class Player extends Phaser.Sprite {
       this.cursors = this.game.input.keyboard.createCursorKeys();
     }
 
-    this.player3d = new Player3d();
-    this.player3d.position.z = -100 * index;
+    this.player3d = new Player3d(index);
     Scene3d.add(this.player3d);
 
     this.events.onKilled.add(this.remove3d, this);
@@ -126,6 +125,8 @@ class Player extends Phaser.Sprite {
 
   remove3d() {
     Scene3d.remove(this.player3d);
+
+    this.level.removeSimulation(this.index);
   }
 }
 

@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+import Config from '../Config';
+
 class Enemy3d extends THREE.Group {
   constructor(enemy, index) {
     super();
@@ -15,7 +17,7 @@ class Enemy3d extends THREE.Group {
     const mesh = new THREE.Mesh(new THREE.SphereBufferGeometry(30, 10, 7), material);
     mesh.position.x = enemy.position.x;
     mesh.position.y = -enemy.position.y;
-    mesh.position.z = -index * tileDepth;
+    mesh.position.z = -index * (Config.tileDepth + Config.tileDepthMargin);
     this.add(mesh);
   }
 }

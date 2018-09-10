@@ -1,7 +1,8 @@
 import Config from '../Config';
 import AI from './AI';
-import Player from "./Player";
-import Level from "./Level";
+import Player from './Player';
+import Level from './Level';
+import ColorManager from '../3d/ColorManager';
 
 class Play extends Phaser.State {
   constructor() {
@@ -20,6 +21,8 @@ class Play extends Phaser.State {
     this.game.world.setBounds(0, 0, Config.tileWidth*Config.horizontalTiles, Config.tileHeight*Config.verticalTiles);
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    ColorManager.shuffle();
 
     this.level = new Level(this.game, this.levelInput);
 
@@ -50,11 +53,14 @@ class Play extends Phaser.State {
         this.firstPlayer = player;
       }
     })
+    if (Config.humanControl && this.players.children[0].alive) {
+      this.firstPlayer = this.players.children[0];
+    }
 
     if (!this.firstPlayer) {
       this.restart();
     } else {
-      this.game.camera.follow(this.focusPlayer(), undefined, 0.1, 0.1);
+      this.game.camera.follow(this.firstPlayer, undefined, 0.05, 0.05);
     }
   }
 
@@ -63,39 +69,32 @@ class Play extends Phaser.State {
       game.debug.text(this.game.time.fps, 0, 40);   
 
       // this.game.debug.text(this.game.time.physicsElapsed, 20, 20);
-      // this.game.debug.cameraInfo(this.game.camera, 20, 20);
+      this.game.debug.cameraInfo(this.game.camera, 20, 20);
 
-      // this.game.debug.text(`Score: ${this.focusPlayer() ? this.focusPlayer().score : 0}`, 20, 40);
+      // this.game.debug.text(`Score: ${this.firstPlayer ? this.firstPlayer.score : 0}`, 20, 40);
       // this.game.debug.text(`Max Score: ${this.maxScore}`, 20, 60);
       // this.game.debug.text(`Generation: ${AI.generationAmount}`, 20, 80);
       // this.game.debug.text(`Alives: ${this.players.children.filter(p => p.alive).length}`, 20, 100);
 
-      if (this.focusPlayer()) {
-        // this.game.debug.body(this.focusPlayer());
-        // this.game.debug.bodyInfo(this.focusPlayer(), 20, 20);
-        // this.game.debug.spriteCoords(this.focusPlayer(), 20, 450);
+      if (this.firstPlayer) {
+        // this.game.debug.body(this.firstPlayer);
+        // this.game.debug.bodyInfo(this.firstPlayer, 20, 20);
+        // this.game.debug.spriteCoords(this.firstPlayer, 20, 450);
       }
     }
   }
 
-  focusPlayer() {
-    return Config.humanControl ? this.players.children[0] : this.firstPlayer;
-  }
-
   takeCoin(player, coin) {
-    // console.log('takeCoin', player, coin)
     coin.kill();
     player.score++;
     this.maxScore = Math.max(this.maxScore, player.score);
   }
 
   killPlayer(player, enemy) {
-    // console.log('killPlayer', player, enemy)
     player.kill();
   }
 
   restart() {
-    // console.log('restart');
     clearTimeout(this.gameTimer);
     this.players.children.forEach(p => AI.setScore(p.index, p.score));
 

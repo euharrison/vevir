@@ -11,8 +11,7 @@ class Scene3d extends THREE.Scene {
     super();
 
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 20000);
-    this.camera.position.z = 800 * 1;
-    this.camera.rotation.x = -10 * Math.PI/180;
+    this.camera.rotation.x = -20 * Math.PI/180;
 
     const ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
     this.add(ambientLight);
@@ -23,15 +22,15 @@ class Scene3d extends THREE.Scene {
 
     //
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer = new THREE.WebGLRenderer({ antialias: false });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('render').appendChild(this.renderer.domElement);
 
-    if (Config.devMode) {
+    // if (Config.devMode) {
       this.stats = new Stats();
       document.getElementById('render').appendChild(this.stats.dom);
-    }
+    // }
 
     //
 
@@ -65,7 +64,19 @@ class Scene3d extends THREE.Scene {
     }
 
     this.camera.position.x = Play.camera.position.x + Play.camera.view.width/2 - 100;
-    this.camera.position.y = -Play.camera.position.y - Play.camera.view.height/2 + 200;
+    this.camera.position.y = -Play.camera.position.y - Play.camera.view.height/2 + 300;
+
+    const frontPlayer = Play.players.children.find(p => p.alive);
+    const index = frontPlayer ? frontPlayer.index : 0;
+    const camZ = -index * (Config.tileDepth + Config.tileDepthMargin) + 800;
+    this.camera.position.z += (camZ - this.camera.position.z) * 0.05;
+
+// console.log(index)
+
+    // if (Play.firstPlayer) {
+      // console.log(Play.firstPlayer.index)
+    // }
+
   }
 }
 

@@ -1,12 +1,12 @@
 export default {
-  // show debugs
+  // hide debugs and improve performance
   devMode: true,
 
   // enable it to control one player
   humanControl: true,
 
   // amount of players in the same game, don't set < 3, it will crash the app
-  population: 6,
+  population: 20,
 
   // time to auto restart level
   restartTime: 20000,
@@ -16,6 +16,8 @@ export default {
   horizontalTiles: 40,
   tileWidth: 40,
   tileHeight: 40,
+  tileDepth: 60,
+  tileDepthMargin: 200,
 
   // dimensions of game, keep it low to improve performance
   gameWidth: 1920/2,

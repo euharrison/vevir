@@ -1,34 +1,50 @@
 import * as THREE from 'three';
 
 import Config from '../Config';
+import ColorManager from './ColorManager';
 
 class Level3d extends THREE.Group {
   constructor(tiles) {
     super();
 
-    const hue = Math.random() * 255;
+    const geometry = new THREE.BoxBufferGeometry(Config.tileWidth, Config.tileHeight, Config.tileDepth);
 
-    const material = new THREE.MeshPhongMaterial( { 
-      color: new THREE.Color(`hsl(${hue}, 100%, 50%)`),
-      shininess: 30,
-      flatShading: true,
-    } );
+    for (let i = 0; i < Config.population; i++) {
 
-    const tileDepth = 100;
+      const hue = ColorManager.get(i);
 
-    const width = tiles.length ? tiles[0].width : 10;
-    const height = tiles.length ? tiles[0].height : 10;
-    const depth = tileDepth * Config.population;
+      const material = new THREE.MeshPhongMaterial({ 
+        color: new THREE.Color(`hsl(${hue}, 50%, 50%)`),
+        shininess: 30,
+        flatShading: true,
+      });
 
-    const geometry = new THREE.BoxBufferGeometry(width, height, depth);
+      // TODO merge mesh for better performance
+      // var geom = new THREE.Geometry();
+      // geom.mergeMesh(new THREE.Mesh(new THREE.BoxGeometry(2,20,2)));
+      // geom.mergeMesh(new THREE.Mesh(new THREE.BoxGeometry(5,5,5)));
+      // geom.mergeVertices(); // optional
+      // scene.add(new THREE.Mesh(geom, material));
+      //https://threejs.org/docs/#api/en/core/BufferGeometry.fromGeometry
+      //https://threejs.org/docs/#api/en/core/BufferGeometry.merge
 
-    tiles.forEach(tile => {
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.x = tile.x;
-      mesh.position.y = -tile.y;
-      mesh.position.z = -depth/2 + tileDepth;
-      this.add(mesh);
-    });
+      const index = i;
+
+      tiles.forEach(tile => {
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.x = tile.x;
+        mesh.position.y = -tile.y;
+        mesh.position.z = -index * (Config.tileDepth + Config.tileDepthMargin);
+        this.add(mesh);
+
+        mesh.simulation = index;
+      });
+    }
+  }
+
+  removeSimulation(index) {
+    const objects = this.children.filter(c => c.simulation === index);
+    this.remove(...objects);
   }
 }
 
