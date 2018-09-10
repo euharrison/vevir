@@ -1,7 +1,7 @@
 import Config from '../Config';
 import AI from './AI';
 import Player from "./Player";
-import LevelGenerator from "./LevelGenerator";
+import Level from "./Level";
 
 class Play extends Phaser.State {
   constructor() {
@@ -29,7 +29,7 @@ class Play extends Phaser.State {
 
     this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'background');
 
-    this.level = new LevelGenerator(this.game);
+    this.level = new Level(this.game);
     this.level.create(this.levelInput);
 
     this.players = this.game.add.group();

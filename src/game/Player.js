@@ -1,7 +1,7 @@
 import AI from './AI';
 import Config from '../Config';
 import Player3d from '../3d/Player3d';
-import Render from '../3d/Render';
+import Scene3d from '../3d/Scene3d';
 
 class Player extends Phaser.Sprite {
   constructor(index, game, level) {
@@ -33,7 +33,7 @@ class Player extends Phaser.Sprite {
 
     this.player3d = new Player3d();
     this.player3d.position.z = -100 * index;
-    Render.scene.add(this.player3d);
+    Scene3d.add(this.player3d);
 
     this.events.onKilled.add(this.remove3d, this);
     this.events.onDestroy.add(this.remove3d, this);
@@ -148,7 +148,7 @@ class Player extends Phaser.Sprite {
   }
 
   remove3d() {
-    Render.scene.remove(this.player3d);
+    Scene3d.remove(this.player3d);
   }
 }
 

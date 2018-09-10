@@ -1,9 +1,9 @@
 import * as d3 from 'd3';
 
 import Level3d from '../3d/Level3d';
-import Render from '../3d/Render';
+import Scene3d from '../3d/Scene3d';
 
-class LevelGenerator extends Phaser.Group {
+class Level extends Phaser.Group {
   constructor(game) {
     super(game);
 
@@ -12,7 +12,7 @@ class LevelGenerator extends Phaser.Group {
     this.enemies = this.game.add.group();
 
     this.level3d = new Level3d();
-    Render.scene.add(this.level3d);
+    Scene3d.add(this.level3d);
 
     this.onDestroy.add(this.remove3d, this);
   }
@@ -130,8 +130,8 @@ class LevelGenerator extends Phaser.Group {
   }
 
   remove3d() {
-    Render.scene.remove(this.level3d);
+    Scene3d.remove(this.level3d);
   }
 }
 
-export default LevelGenerator;
+export default Level;

@@ -2,7 +2,6 @@ import $ from 'jquery';
 
 import AudioController from './AudioController';
 import Play from './game/Play';
-import Render from './3d/Render';
 
 import './scss/style.scss';
 

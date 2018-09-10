@@ -6,20 +6,20 @@ import Play from '../game/Play';
 
 if (!Detector.webgl) Detector.addGetWebGLMessage();
 
-class Render {
+class Scene3d extends THREE.Scene {
   constructor() {
+    super();
+
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 20000);
     this.camera.position.z = 800 * 2;
     this.camera.rotation.x = -10 * Math.PI/180;
 
-    this.scene = new THREE.Scene();
-
     var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
-    this.scene.add(ambientLight);
+    this.add(ambientLight);
 
     var pointLight = new THREE.PointLight( 0xffffff, 0.8 );
     this.camera.add(pointLight);
-    this.scene.add(this.camera);
+    this.add(this.camera);
 
     //
 
@@ -52,7 +52,7 @@ class Render {
     window.requestAnimationFrame(this.update);
 
     this.render();
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this, this.camera);
 
     if (this.stats) {
       this.stats.update();
@@ -68,4 +68,4 @@ class Render {
   }
 }
 
-export default new Render();
+export default new Scene3d();
