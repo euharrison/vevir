@@ -12,11 +12,6 @@ class Play extends Phaser.State {
     this.levelInput = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 10, 8, 12, 0, 0];
   }
 
-  preload() {
-    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    this.game.time.advancedTiming = true;
-  }
-
   create() {
     this.game.world.setBounds(0, 0, Config.tileWidth*Config.horizontalTiles, Config.tileHeight*Config.verticalTiles);
 
@@ -66,7 +61,7 @@ class Play extends Phaser.State {
 
   render() {
     if (Config.devMode) {
-      game.debug.text(this.game.time.fps, 0, 40);   
+      this.game.debug.text(this.game.time.fps, 0, 40);
 
       // this.game.debug.text(this.game.time.physicsElapsed, 20, 20);
       this.game.debug.cameraInfo(this.game.camera, 20, 20);
@@ -96,8 +91,6 @@ class Play extends Phaser.State {
 
   restart() {
     clearTimeout(this.gameTimer);
-    this.players.children.forEach(p => AI.setScore(p.index, p.score));
-
     this.game.state.restart();
   }
 
@@ -107,17 +100,4 @@ class Play extends Phaser.State {
   }
 }
 
-const config = {
-  width: Config.gameWidth,
-  height: Config.gameHeight,
-  renderer: Config.devMode ? Phaser.AUTO : Phaser.HEADLESS,
-  antialias: false,
-  parent: 'game',
-}
-const game = new Phaser.Game(config);
-const play = new Play();
-
-game.state.add('play', play);  
-game.state.start('play');
-
-export default play;
+export default new Play();

@@ -13,8 +13,8 @@ class Enemy extends Phaser.Sprite {
     this.enemy3d = new Enemy3d(this, index);
     Scene3d.add(this.enemy3d);
 
-    this.events.onKilled.add(this.remove3d, this);
-    this.events.onDestroy.add(this.remove3d, this);
+    this.events.onKilled.add(this.onRemove, this);
+    this.events.onDestroy.add(this.onRemove, this);
   }
 
   update() {
@@ -25,7 +25,7 @@ class Enemy extends Phaser.Sprite {
     this.game.debug.body(this, '#ff0000');
   }
 
-  remove3d() {
+  onRemove() {
     Scene3d.remove(this.enemy3d);
   }
 }

@@ -32,8 +32,8 @@ class Player extends Phaser.Sprite {
     this.player3d = new Player3d(index);
     Scene3d.add(this.player3d);
 
-    this.events.onKilled.add(this.remove3d, this);
-    this.events.onDestroy.add(this.remove3d, this);
+    this.events.onKilled.add(this.onRemove, this);
+    this.events.onDestroy.add(this.onRemove, this);
   }
 
   update() {
@@ -123,9 +123,10 @@ class Player extends Phaser.Sprite {
     };
   }
 
-  remove3d() {
-    Scene3d.remove(this.player3d);
+  onRemove() {
+    AI.setScore(this.index, this.score);
 
+    Scene3d.remove(this.player3d);
     this.level.removeSimulation(this.index);
   }
 }

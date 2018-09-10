@@ -24,7 +24,7 @@ class Level extends Phaser.Group {
     this.level3d = new Level3d(this.walls.children);
     Scene3d.add(this.level3d);
 
-    this.onDestroy.add(this.remove3d, this);
+    this.onDestroy.add(this.onRemove, this);
   }
 
   create(input) {
@@ -152,7 +152,7 @@ class Level extends Phaser.Group {
     this.level3d.removeSimulation(index);
   }
 
-  remove3d() {
+  onRemove() {
     Scene3d.remove(this.level3d);
   }
 }

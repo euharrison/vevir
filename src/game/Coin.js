@@ -13,8 +13,8 @@ class Coin extends Phaser.Sprite {
     this.coin3d = new Coin3d(this, index);
     Scene3d.add(this.coin3d);
 
-    this.events.onKilled.add(this.remove3d, this);
-    this.events.onDestroy.add(this.remove3d, this);
+    this.events.onKilled.add(this.onRemove, this);
+    this.events.onDestroy.add(this.onRemove, this);
   }
 
   update() {
@@ -25,7 +25,7 @@ class Coin extends Phaser.Sprite {
     this.game.debug.body(this, '#ffff00');
   }
 
-  remove3d() {
+  onRemove() {
     Scene3d.remove(this.coin3d);
   }
 }
