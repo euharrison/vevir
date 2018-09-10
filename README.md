@@ -12,6 +12,9 @@ Vevir é um pequeno ser que habita nas árvores e responde aos sentidos da visã
 - `yarn dev`
 - http://localhost:8080/
 
+Use querystring params for faster and custom setup, for example:
+http://localhost:8080/?devMode=1&humanControl=1&restartTime=5
+
 
 ## Deploy
 

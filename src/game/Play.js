@@ -30,7 +30,7 @@ class Play extends Phaser.State {
 
     AI.nextGeneration();
 
-    this.gameTimer = setTimeout(() => this.restart(), Config.restartTime);
+    this.gameTimer = setTimeout(() => this.restart(), Config.restartTime*1000);
   }
 
   update() {
