@@ -17,7 +17,7 @@ class Capture extends Phaser.State {
 
     Scene3d.updateCameraCapture();
 
-    this.finishTimerId = setTimeout(() => this.finish(), 20 * 1000);
+    this.finishTimeoutId = setTimeout(() => this.finish(), 5 * 1000);
   }
 
   update() {
@@ -34,7 +34,7 @@ class Capture extends Phaser.State {
   }
 
   shutdown() {
-    clearInterval(this.finishTimerId);
+    clearTimeout(this.finishTimeoutId);
     Scene3d.remove(this.spec3d);
   }
 }

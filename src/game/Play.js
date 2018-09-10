@@ -30,7 +30,7 @@ class Play extends Phaser.State {
 
     AI.nextGeneration();
 
-    this.gameTimer = setTimeout(() => this.restart(), Config.restartTime*1000);
+    this.restartTimeoutId = setTimeout(() => this.restart(), Config.restartTime*1000);
   }
 
   update() {
@@ -90,8 +90,11 @@ class Play extends Phaser.State {
   }
 
   restart() {
-    clearTimeout(this.gameTimer);
     this.game.state.restart();
+  }
+
+  shutdown() {
+    clearTimeout(this.restartTimeoutId);
   }
 }
 

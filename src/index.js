@@ -49,11 +49,7 @@ function onKeyPress(e) {
       break;
     case 'r':
     case 'R':
-      if (game.state.current === 'capture') {
-        game.state.start('play');
-      } else {
-        Play.restart();
-      }
+      game.state.start('play');
       break;
   }
 }

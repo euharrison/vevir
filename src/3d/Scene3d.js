@@ -75,7 +75,7 @@ class Scene3d extends THREE.Scene {
     const frontPlayer = play.players.children.find(p => p.alive);
     const index = frontPlayer ? frontPlayer.index : 0;
     const camZ = -index * (Config.tileDepth + Config.tileDepthMargin) + 800;
-    this.camera.position.z += (camZ - this.camera.position.z) * 0.05;
+    this.camera.position.z += (camZ - this.camera.position.z) * 0.02;
   }
 }
 
