@@ -1,6 +1,6 @@
 const config = {
   // ignore phaser render engine for better performance
-  devMode: false,
+  devMode: true,
 
   // show fps rate
   showFPS: false,
@@ -15,13 +15,13 @@ const config = {
   population: 20,
 
   // time to auto restart level
-  restartTime: 15,
+  restartTime: 999999,
 
   // tiles amount and sizes
-  verticalTiles: 80,
+  verticalTiles: 40,
   horizontalTiles: 80,
-  tileWidth: 80,
-  tileHeight: 10,
+  tileWidth: 200,
+  tileHeight: 20,
   tileDepth: 60,
   tileDepthMargin: 200,
 
@@ -31,7 +31,7 @@ const config = {
 
   // how faster player can move
   playerVelocity: 400,
-  playerJump: 500,
+  playerJump: 800,
 }
 
 const params = new URLSearchParams(window.location.search);

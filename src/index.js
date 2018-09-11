@@ -20,13 +20,13 @@ const boot = {
     game.time.advancedTiming = true;
   },
   create: function() {
-    game.state.start('capture');
-    // game.state.start('play');
+    // game.state.start('capture');
+    game.state.start('play');
   },
 }
 
 // first audio sample
-game.spectrogram = [121, 140, 142, 128, 122, 116, 97, 66, 62, 49, 23, 10, 8, 12, 0, 0];
+game.spectrogram = [121, 140, 142, 168, 122, 116, 160, 66, 62, 49, 23, 10, 8, 12, 0, 0];
 
 game.state.add('boot', boot);
 game.state.add('capture', Capture);

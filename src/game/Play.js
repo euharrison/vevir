@@ -67,12 +67,21 @@ class Play extends Phaser.State {
     this.game.debug.text(this.game.time.fps, 0, 40);
 
     // this.game.debug.text(this.game.time.physicsElapsed, 20, 20);
-    this.game.debug.cameraInfo(this.game.camera, 20, 20);
+    // this.game.debug.cameraInfo(this.game.camera, 20, 20);
 
-    // this.game.debug.text(`Score: ${this.firstPlayer ? this.firstPlayer.score : 0}`, 20, 40);
-    // this.game.debug.text(`Max Score: ${this.maxScore}`, 20, 60);
-    // this.game.debug.text(`Generation: ${AI.generationAmount}`, 20, 80);
-    // this.game.debug.text(`Alives: ${this.players.children.filter(p => p.alive).length}`, 20, 100);
+    this.game.debug.text(`Score: ${this.firstPlayer ? this.firstPlayer.score : 0}`, 20, 40);
+    this.game.debug.text(`Max Score: ${this.maxScore}`, 20, 60);
+    this.game.debug.text(`Generation: ${AI.generationAmount}`, 20, 80);
+    this.game.debug.text(`Alives: ${this.players.children.filter(p => p.alive).length}`, 20, 100);
+
+    lastScore.forEach((s, i) => {
+      this.game.debug.text(`${s}`, 20, 120 + i*20);
+    })
+
+
+    this.players.children.forEach((s, i) => {
+      this.game.debug.text(`${s.getInput()}`, 220, 120 + i*20);
+    })
 
     if (this.firstPlayer) {
       // this.game.debug.body(this.firstPlayer);
@@ -96,8 +105,12 @@ class Play extends Phaser.State {
   }
 
   shutdown() {
+    lastScore = this.players.children.map(p => p.getScore());
+    
     clearTimeout(this.restartTimeoutId);
   }
 }
+
+let lastScore = [1,2,3];
 
 export default new Play();

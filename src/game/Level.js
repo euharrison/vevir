@@ -22,7 +22,7 @@ class Level extends Phaser.Group {
     this.create(input);
 
     this.level3d = new Level3d(this.walls.children);
-    Scene3d.add(this.level3d);
+    // Scene3d.add(this.level3d);
 
     this.onDestroy.add(this.onRemove, this);
   }
@@ -61,20 +61,24 @@ class Level extends Phaser.Group {
         if (x < 2 && y === maxFloorHeight) {
           level[y][x] = 'x';
         }
-        else if (y > crop) {
+        else if (y === maxFloorHeight+5) {
           const ceil = Math.ceil(crop);
-          if (y === ceil || y === ceil+1) {
+          // if (y === ceil || y === ceil+1) {
             level[y][x] = 'x';
-          } else {
-            level[y][x] = ' ';
-          }
+          // } else {
+          //   level[y][x] = ' ';
+          // }
         }
-        else if (y > verticalLength - horizontalValues[x] - 2 && x % 2 === 0) {
-          level[y][x] = x > 10 && Math.random() < 0.2 ? '!' : ' ';
+        else if (y === verticalLength - maxFloorHeight+4 && x % 3 === 0) {
+          if (x < 20) {
+            level[y][x] = x > 2 && Math.random() < 0.5 ? '!' : ' ';
+          } else {
+            level[y][x] = x > 2 && Math.random() < 0.8 ? '!' : ' ';
+          }
           // level[y][x] = ' ';
         }
         else if (y > verticalLength - horizontalValues[x] - 3 && x % 2 === 1) {
-          level[y][x] = Math.random() < 0.2 ? 'o' : ' ';
+          level[y][x] = Math.random() < 0.2 ? ' ' : ' ';
           // if (x > 70) {
           //   level[y][x] = hasCoin ? ' ' : 'o';
           //   hasCoin = true;
@@ -139,8 +143,8 @@ class Level extends Phaser.Group {
           // enemy
           case '!':
             for (let i = 0; i < Config.population; i++) {
-              const enemy = new Enemy(this.game, i, tileWidth * x, tileHeight * y);
-              this.enemies[i].add(enemy);
+              const enemy = new Enemy(this.game, i, tileWidth * x + Math.random()*300, tileHeight * y);
+              this.enemies[i].add(enemy);;
             }
             break;
         }
