@@ -20,8 +20,8 @@ const boot = {
     game.time.advancedTiming = true;
   },
   create: function() {
-    // game.state.start('capture');
-    game.state.start('play');
+    game.state.start('capture');
+    // game.state.start('play');
   },
 }
 

@@ -42,6 +42,26 @@ class Level3d extends THREE.Group {
     }
   }
 
+  appendTile(tile, index = 0) {
+    const geometry = new THREE.BoxBufferGeometry(Config.tileWidth, Config.tileHeight*10, Config.tileDepth);
+
+    const hue = ColorManager.get(index);
+
+    const material = new THREE.MeshPhongMaterial({ 
+      color: new THREE.Color(`hsl(${hue}, 50%, 50%)`),
+      shininess: 30,
+      flatShading: true,
+    });
+
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.x = tile.x;
+    mesh.position.y = -tile.y;
+    mesh.position.z = -index * (Config.tileDepth + Config.tileDepthMargin);
+    this.add(mesh);
+
+    mesh.simulation = index;
+  }
+
   removeSimulation(index) {
     const objects = this.children.filter(c => c.simulation === index);
     this.remove(...objects);

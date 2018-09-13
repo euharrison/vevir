@@ -8,7 +8,10 @@ const config = {
   // fftSize for audio buffer length
   fftSize: 256 * 2,
 
-  // enable it to control one player
+  // time to capture audio and create the level
+  captureTime: 10 * 1000,
+
+  // enable it to control one player with arrow keys
   humanControl: false,
 
   // amount of players in the same game, don't set < 3, it will crash the app

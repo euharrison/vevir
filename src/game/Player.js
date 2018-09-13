@@ -177,7 +177,7 @@ class Player extends Phaser.Sprite {
 
   onRemove() {
     // TODO usar a position.x e a quantidade de moedas como score
-    console.log('JUMP', this.jumpCount, this.position.x, this.getScore())
+    // console.log('JUMP', this.jumpCount, this.position.x, this.getScore())
     AI.setScore(this.index, this.getScore());
 
     Scene3d.remove(this.player3d);
