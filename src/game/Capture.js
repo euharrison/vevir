@@ -4,6 +4,7 @@ import Config from '../Config';
 import Audio from './Audio';
 import Level from './Level';
 import Spectrogram3d from '../3d/Spectrogram3d';
+import ColorManager from '../3d/ColorManager';
 import Scene3d from '../3d/Scene3d';
 
 class Capture extends Phaser.State {
@@ -13,6 +14,8 @@ class Capture extends Phaser.State {
   }
 
   create() {
+    ColorManager.shuffle();
+
     this.game.spectrogram = Audio.getSpectrogram();
 
     this.spec3d = new Spectrogram3d(this.game.spectrogram.length);
@@ -20,7 +23,16 @@ class Capture extends Phaser.State {
 
     this.level = new Level(this.game);
 
-    this.game.tiles = [];
+    const x = this.column * Config.tileWidth;
+    const y = Config.verticalTiles * Config.tileHeight;
+
+    this.game.tiles = [
+      { type: 'wall', x, y: y },
+      { type: 'wall', x, y: y },
+    ];
+
+    const tiles = [
+    ];
 
     this.column = 0;
     this.intervalId = setInterval(
@@ -30,17 +42,20 @@ class Capture extends Phaser.State {
   }
 
   update() {
-    this.game.spectrogram = Audio.getSpectrogram();
-    this.spec3d.update(this.game.spectrogram);
+    const floors = this.level.floors.children;
+    const lastFloor = floors[floors.length-1];
 
-    if (this.column === Config.horizontalTiles) {
-      this.game.camera.unfollow();
-    } else {
-      const floors = this.level.floors.children;
-      this.game.camera.follow(floors[floors.length-1], Phaser.Camera.FOLLOW_LOCKON);
+    if (this.column < Config.horizontalTiles) {
+      this.game.camera.x = -1300 + (lastFloor ? lastFloor.x : 0);
     }
 
     Scene3d.updateCamera(this.camera);
+
+    this.game.spectrogram = Audio.getSpectrogram();
+
+    this.spec3d.update(this.game.spectrogram);
+    // this.spec3d.position.x = this.game.camera.x;
+    this.spec3d.position.x = lastFloor ? lastFloor.x : 0;
   }
 
   render() {
@@ -49,13 +64,11 @@ class Capture extends Phaser.State {
   }
 
   createTile() {
-    this.game.spectrogram = Audio.getSpectrogram();
-
     const x = this.column * Config.tileWidth;
     const y = Config.verticalTiles * Config.tileHeight;
 
     const tiles = [
-      { type: 'wall', x, y: y - (1 * Config.tileHeight) },
+      { type: 'wall', x, y: y },
     ];
 
     // TODO podemos fixar os numeros do audio ao inves de normalizar?
@@ -65,10 +78,10 @@ class Capture extends Phaser.State {
       tiles.push({ type: 'wall', x, y: y - (4 * Config.tileHeight) });
     }
     if (Math.random() < 0.3 && x > 1000 && this.column % 2 == 0) {
-      tiles.push({ type: 'coin', x, y: y - (2 * Config.tileHeight) });
+      tiles.push({ type: 'coin', x, y: y - (1 * Config.tileHeight) });
     }
     if (Math.random() < 0.3 && x > 1000 && this.column % 2 == 1) {
-      tiles.push({ type: 'enemy', x, y: y - (2 * Config.tileHeight) });
+      tiles.push({ type: 'enemy', x, y: y - (1 * Config.tileHeight) });
     }
     tiles.forEach((tile) => this.level.createTile(tile));
 
@@ -83,12 +96,14 @@ class Capture extends Phaser.State {
   finish() {
     clearTimeout(this.intervalId);
 
+    Scene3d.remove(this.spec3d);
+
     anime({
       targets: this.game.camera,
       duration: 3000,
       easing: 'easeInOutExpo',
       delay: 1000,
-      x: 0,
+      x: -300,
       complete: () => {
         setTimeout(() => this.game.state.start('play'), 1000);
       },

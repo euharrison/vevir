@@ -4,7 +4,7 @@ import Config from '../Config';
 import ColorManager from './ColorManager';
 
 class Floor3d extends THREE.Group {
-  constructor(floor, index) {
+  constructor(floor) {
     super();
 
     const geometry = new THREE.BoxBufferGeometry(Config.tileWidth, Config.tileHeight, Config.tileDepth);

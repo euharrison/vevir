@@ -13,9 +13,8 @@ class Play extends Phaser.State {
   }
 
   create() {
+    this.game.camera.x = -300;
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
-
-    ColorManager.shuffle();
 
     this.level = new Level(this.game);
     this.game.tiles.forEach((tile) => this.level.createTile(tile));

@@ -20,6 +20,7 @@ const boot = {
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.time.advancedTiming = true;
     game.world.setBounds(0, 0, Config.tileWidth*Config.horizontalTiles, Config.tileHeight*Config.verticalTiles);
+    game.camera.bounds = null;
   },
   create: function() {
     game.state.start('capture');
