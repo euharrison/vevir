@@ -5,10 +5,10 @@ import Scene3d from '../3d/Scene3d';
 
 class Player extends Phaser.Sprite {
   constructor(index, game, level) {
-    super(game, 50, 300);
+    super(game, 50, (Config.verticalTiles-3) * Config.tileHeight);
 
-    this.width = 20;
-    this.height = 30;
+    this.width = Config.tileHeight;
+    this.height = Config.tileHeight;
 
     this.game.physics.arcade.enable(this);
 
@@ -110,7 +110,7 @@ class Player extends Phaser.Sprite {
     const coinDistanceX = (coinX - playerX) / this.game.world.width;
     const coinDistanceY = (coinY - playerY) / this.game.world.height;
 
-    const forwards = this.level.walls.children.filter(w => w.position.x > playerX);
+    const forwards = this.level.floors.children.filter(w => w.position.x > playerX);
 
     let closerX = Infinity;
     forwards.forEach(w => {

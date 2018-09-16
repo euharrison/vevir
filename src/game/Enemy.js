@@ -1,12 +1,13 @@
+import Config from '../Config';
 import Enemy3d from '../3d/Enemy3d';
 import Scene3d from '../3d/Scene3d';
 
 class Enemy extends Phaser.Sprite {
-  constructor(game, index, x, y) {
+  constructor(game, x, y, index) {
     super(game, x, y);
 
-    this.width = 30;
-    this.height = 30;
+    this.width = Config.tileHeight;
+    this.height = Config.tileHeight;
 
     this.game.physics.arcade.enable(this);
 

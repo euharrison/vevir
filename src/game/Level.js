@@ -3,14 +3,14 @@ import * as d3 from 'd3';
 import Config from '../Config';
 import Coin from './Coin';
 import Enemy from './Enemy';
-import Level3d from '../3d/Level3d';
+import Floor from './Floor';
 import Scene3d from '../3d/Scene3d';
 
 class Level extends Phaser.Group {
-  constructor(game, input) {
+  constructor(game) {
     super(game);
 
-    this.walls = this.game.add.group();
+    this.floors = this.game.add.group();
 
     this.coins = [];
     this.enemies = [];
@@ -18,13 +18,6 @@ class Level extends Phaser.Group {
       this.coins.push(this.game.add.group());
       this.enemies.push(this.game.add.group());
     }
-
-    this.create(input);
-
-    this.level3d = new Level3d(this.walls.children);
-    // Scene3d.add(this.level3d);
-
-    this.onDestroy.add(this.onRemove, this);
   }
 
   create(input) {
@@ -99,69 +92,32 @@ class Level extends Phaser.Group {
     // console.log(level.map(row => `|${row.join('')}|`).join('\n'));
   }
 
-  /*
-  Level sample
-  x = wall, o = coin, ! = lava.
-  'xxxxxxxxxxxxxxxxxxxxxx',
-  '          !          x',
-  '                  o  x',
-  '          o          x',
-  '                     x',
-  'xxx   o   !    x     x',
-  'xxxxxxxxxxxxxxxx!!!!!x',
-  */
-  createSprites(level) {
-    const horizontalLength = level[0].length;
-    const verticalLength = level.length;
+  createTile(tile) {
+    switch (tile.type) {
+      case 'wall':
+        const floor = new Floor(this.game, tile.x, tile.y);
+        this.floors.add(floor);
+        break;
 
-    const tileWidth = Config.tileWidth;
-    const tileHeight = this.game.world.height / verticalLength;
-
-    for (let y = 0; y < verticalLength; y++) {
-      for (let x = 0; x < horizontalLength; x++) {
-        switch (level[y][x]) {
-
-          // wall
-          case 'x':
-            const wall = this.game.add.sprite(tileWidth * x, tileHeight * y, Phaser.Cache.MISSING);
-            wall.width = tileWidth;
-            wall.height = tileHeight;
-            this.walls.add(wall);
-            this.game.physics.arcade.enable(wall);
-            wall.body.immovable = true;
-            wall.body.allowGravity = false;
-            break;
-
-          // coin
-          case 'o':
-            for (let i = 0; i < Config.population; i++) {
-              const coin = new Coin(this.game, i, tileWidth * x, tileHeight * y);
-              this.coins[i].add(coin);
-            }
-            break;
-
-          // enemy
-          case '!':
-            for (let i = 0; i < Config.population; i++) {
-              const enemy = new Enemy(this.game, i, tileWidth * x + Math.random()*300, tileHeight * y);
-              this.enemies[i].add(enemy);;
-            }
-            break;
+      case 'coin':
+        for (let i = 0; i < Config.population; i++) {
+          const coin = new Coin(this.game, tile.x + Math.random()*Config.tileWidth, tile.y, i);
+          this.coins[i].add(coin);
         }
-      }
+        break;
+
+      case 'enemy':
+        for (let i = 0; i < Config.population; i++) {
+          const enemy = new Enemy(this.game, tile.x + Math.random()*Config.tileWidth, tile.y, i);
+          this.enemies[i].add(enemy);
+        }
+        break;
     }
   }
 
   removeSimulation(index) {
     this.coins[index].killAll();
     this.enemies[index].killAll();
-
-    // TODO pensar numa maneira mais suave de remover o level, dá um impacto visual muito grande
-    // this.level3d.removeSimulation(index);
-  }
-
-  onRemove() {
-    Scene3d.remove(this.level3d);
   }
 }
 

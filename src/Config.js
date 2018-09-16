@@ -9,7 +9,7 @@ const config = {
   fftSize: 256 * 2,
 
   // time to capture audio and create the level
-  captureTime: 10 * 1000,
+  captureTime: 2 * 1000,
 
   // enable it to control one player with arrow keys
   humanControl: false,
@@ -21,7 +21,7 @@ const config = {
   restartTime: 999999,
 
   // tiles amount and sizes
-  verticalTiles: 40,
+  verticalTiles: 20,
   horizontalTiles: 80,
   tileWidth: 200,
   tileHeight: 20,

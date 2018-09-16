@@ -13,13 +13,12 @@ class Play extends Phaser.State {
   }
 
   create() {
-    this.game.world.setBounds(0, 0, Config.tileWidth*Config.horizontalTiles, Config.tileHeight*Config.verticalTiles);
-
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
     ColorManager.shuffle();
 
-    this.level = new Level(this.game, this.game.spectrogram);
+    this.level = new Level(this.game);
+    this.game.tiles.forEach((tile) => this.level.createTile(tile));
 
     this.players = this.game.add.group();
     for (let i = 0; i < Config.population; i++) {
@@ -34,7 +33,7 @@ class Play extends Phaser.State {
   }
 
   update() {
-    this.game.physics.arcade.collide(this.players, this.level.walls);
+    this.game.physics.arcade.collide(this.players, this.level.floors);
 
     for (let i = 0; i < Config.population; i++) {
       this.game.physics.arcade.overlap(this.players.children[i], this.level.coins[i], this.takeCoin, null, this);
@@ -60,7 +59,7 @@ class Play extends Phaser.State {
 
     // TODO verificar se o first player está muito tempo parado no msm lugar, se sim, restart
 
-    Scene3d.updateCameraPlay(this);
+    Scene3d.updateCamera(this.camera);
   }
 
   render() {

@@ -3,6 +3,7 @@ import $ from 'jquery';
 import Config from './Config';
 import Capture from './game/Capture';
 import Play from './game/Play';
+import LevelSample from './game/LevelSample';
 
 import './scss/style.scss';
 
@@ -18,6 +19,7 @@ const boot = {
   preload: function() {
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.time.advancedTiming = true;
+    game.world.setBounds(0, 0, Config.tileWidth*Config.horizontalTiles, Config.tileHeight*Config.verticalTiles);
   },
   create: function() {
     game.state.start('capture');
@@ -25,8 +27,8 @@ const boot = {
   },
 }
 
-// first audio sample
-game.spectrogram = [121, 140, 142, 168, 122, 116, 160, 66, 62, 49, 23, 10, 8, 12, 0, 0];
+// first level sample
+game.tiles = LevelSample;
 
 game.state.add('boot', boot);
 game.state.add('capture', Capture);

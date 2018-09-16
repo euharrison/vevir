@@ -1,12 +1,13 @@
+import Config from '../Config';
 import Coin3d from '../3d/Coin3d';
 import Scene3d from '../3d/Scene3d';
 
 class Coin extends Phaser.Sprite {
-  constructor(game, index, x, y) {
+  constructor(game, x, y, index) {
     super(game, x, y);
 
-    this.width = 10;
-    this.height = 10;
+    this.width = Config.tileHeight;
+    this.height = Config.tileHeight;
 
     this.game.physics.arcade.enable(this);
 

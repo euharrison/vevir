@@ -35,7 +35,7 @@ class Spectrogram3d extends THREE.Group {
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.x = (index - (this.dataSize/2)) * (width * 1.5);
     mesh.position.y = 0;
-    mesh.position.z = 0;
+    mesh.position.z = -1000;
     this.add(mesh);
   }
 }
