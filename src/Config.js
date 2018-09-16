@@ -18,7 +18,7 @@ const config = {
   population: 20,
 
   // time to auto restart level
-  restartTime: 999999,
+  restartTime: 30 * 1000,
 
   // tiles amount and sizes
   verticalTiles: 20,
