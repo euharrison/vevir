@@ -12,7 +12,7 @@ class Player extends Phaser.Sprite {
 
     this.game.physics.arcade.enable(this);
 
-    this.body.gravity.y = 3000;
+    this.body.gravity.y = Config.playerGravity;
     this.body.maxVelocity.y = Config.playerJump;
 
     this.checkWorldBounds = true;

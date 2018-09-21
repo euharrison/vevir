@@ -1,9 +1,9 @@
 const config = {
   // ignore phaser render engine for better performance
-  devMode: false,
+  devMode: true,
 
   // show fps rate
-  showFPS: false,
+  showFPS: true,
 
   // fftSize for audio buffer length
   fftSize: 256 * 2,
@@ -22,8 +22,8 @@ const config = {
 
   // tiles amount and sizes
   verticalTiles: 20,
-  horizontalTiles: 80,
-  tileWidth: 200,
+  horizontalTiles: 60,
+  tileWidth: 300,
   tileHeight: 20,
   tileDepth: 60,
   tileDepthMargin: 200,
@@ -33,8 +33,9 @@ const config = {
   gameHeight: 1080/2,
 
   // how faster player can move
-  playerVelocity: 400,
-  playerJump: 800,
+  playerVelocity: 800,
+  playerJump: 1200,
+  playerGravity: 6000,
 }
 
 const params = new URLSearchParams(window.location.search);

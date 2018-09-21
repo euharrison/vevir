@@ -75,7 +75,7 @@ class Player3d extends THREE.Group {
     // human.add( sickEye );
     this.add( this.mouth );
 
-    const scale = 0.7;
+    const scale = 0.4;
     this.scale.set(scale, scale, scale);
 
     this.position.z = -index * (Config.tileDepth + Config.tileDepthMargin);
