@@ -135,11 +135,6 @@ export default [
     "y": 380
   },
   {
-    "type": "enemy",
-    "x": 3800,
-    "y": 360
-  },
-  {
     "type": "wall",
     "x": 4000,
     "y": 380
@@ -193,11 +188,6 @@ export default [
     "type": "wall",
     "x": 5400,
     "y": 380
-  },
-  {
-    "type": "enemy",
-    "x": 5400,
-    "y": 360
   },
   {
     "type": "wall",
@@ -415,11 +405,6 @@ export default [
     "y": 380
   },
   {
-    "type": "enemy",
-    "x": 11400,
-    "y": 360
-  },
-  {
     "type": "wall",
     "x": 11600,
     "y": 380
@@ -535,11 +520,6 @@ export default [
     "y": 380
   },
   {
-    "type": "enemy",
-    "x": 15000,
-    "y": 360
-  },
-  {
     "type": "wall",
     "x": 15200,
     "y": 380
@@ -568,10 +548,5 @@ export default [
     "type": "wall",
     "x": 15800,
     "y": 380
-  },
-  {
-    "type": "enemy",
-    "x": 15800,
-    "y": 360
   }
 ]

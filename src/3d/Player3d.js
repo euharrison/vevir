@@ -92,7 +92,7 @@ class Player3d extends THREE.Group {
     this.mouth.scale.y = MathUtils.map(Math.sin(timerMouth), -1, 1, 0.25, 1);
 
     this.position.x = player.x;
-    this.position.y = -player.y;
+    this.position.y = -player.y + 30;
 
     const yRot = (player.body.velocity.x < 0 ? -90 : 90) * Math.PI/180;
     const xRot = MathUtils.map(player.body.deltaY(), 10, -10, 15, -15) * Math.PI/180;

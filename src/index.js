@@ -23,8 +23,8 @@ const boot = {
     game.camera.bounds = null;
   },
   create: function() {
-    game.state.start('capture');
-    // game.state.start('play');
+    // game.state.start('capture');
+    game.state.start('play');
   },
 }
 

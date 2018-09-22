@@ -13,6 +13,10 @@ class Play extends Phaser.State {
   }
 
   create() {
+    Scene3d.camera.near = 600;
+    Scene3d.camera.far = 2000;
+    Scene3d.camera.updateProjectionMatrix();
+
     this.game.camera.x = -300;
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -77,8 +81,8 @@ class Play extends Phaser.State {
     })
 
 
-    this.players.children.forEach((s, i) => {
-      this.game.debug.text(`${s.getInput()}`, 220, 120 + i*20);
+    this.players.children.forEach((p, i) => {
+      if (p.alive) this.game.debug.text(`${p.getNextEnemyX()}`, 220, 120 + i*20);
     })
 
     if (this.firstPlayer) {
@@ -90,8 +94,8 @@ class Play extends Phaser.State {
 
   takeCoin(player, coin) {
     coin.kill();
-    player.score++;
-    this.maxScore = Math.max(this.maxScore, player.score);
+    player.coins++;
+    this.maxScore = Math.max(this.maxScore, player.getScore());
   }
 
   killPlayer(player, enemy) {
@@ -109,6 +113,6 @@ class Play extends Phaser.State {
   }
 }
 
-let lastScore = [1,2,3];
+let lastScore = [];
 
 export default new Play();

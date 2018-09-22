@@ -9,14 +9,19 @@ class Scene3d extends THREE.Scene {
   constructor() {
     super();
 
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 20000);
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight);
+    this.add(this.camera);
 
     const ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
     this.add(ambientLight);
 
     const pointLight = new THREE.PointLight(0xffffff, 0.8);
+    pointLight.position.y = 1000;
     this.camera.add(pointLight);
-    this.add(this.camera);
+
+    const pointLight2 = new THREE.PointLight(0xffffff, 0.2);
+    pointLight2.position.z = 500;
+    this.camera.add(pointLight2);
 
     //
 
@@ -56,13 +61,15 @@ class Scene3d extends THREE.Scene {
   }
 
   updateCamera(camera) {
-    this.camera.rotation.x = -20 * Math.PI/180;
-    this.camera.rotation.y = 0;
-    this.camera.rotation.z = 0;
+    this.camera.rotation.y = -90 * Math.PI/180;
 
-    this.camera.position.x = camera.position.x + camera.view.width/2 + 500;
-    this.camera.position.y = 170;
-    this.camera.position.z = 800;
+    this.camera.position.x = camera.position.x + camera.view.width/2 - 600;
+    this.camera.position.y = -200;
+    this.camera.position.z = (-Config.population+1) * (Config.tileDepth+Config.tileDepthMargin) / 2;
+  }
+
+  getMaxDeth() {
+    return ;
   }
 }
 

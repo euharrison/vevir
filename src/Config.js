@@ -1,9 +1,9 @@
 const config = {
   // ignore phaser render engine for better performance
-  devMode: true,
+  devMode: false,
 
   // show fps rate
-  showFPS: true,
+  showFPS: false,
 
   // fftSize for audio buffer length
   fftSize: 256 * 2,
@@ -15,18 +15,18 @@ const config = {
   humanControl: false,
 
   // amount of players in the same game, don't set < 3, it will crash the app
-  population: 20,
+  population: 10,
 
   // time to auto restart level
-  restartTime: 30 * 1000,
+  restartTime: 9999 * 1000,
 
   // tiles amount and sizes
   verticalTiles: 20,
   horizontalTiles: 60,
   tileWidth: 300,
   tileHeight: 20,
-  tileDepth: 60,
-  tileDepthMargin: 200,
+  tileDepth: 80,
+  tileDepthMargin: 0,
 
   // dimensions of game, keep it low to improve performance
   gameWidth: 1920/2,

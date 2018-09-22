@@ -95,6 +95,7 @@ class Level extends Phaser.Group {
   createTile(tile) {
     switch (tile.type) {
       case 'wall':
+        if (tile.y < 380) break; // nao cria o segundo andar
         const floor = new Floor(this.game, tile.x, tile.y);
         this.floors.add(floor);
         break;

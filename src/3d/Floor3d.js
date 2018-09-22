@@ -7,7 +7,7 @@ class Floor3d extends THREE.Group {
   constructor(floor) {
     super();
 
-    const geometry = new THREE.BoxBufferGeometry(Config.tileWidth, Config.tileHeight, Config.tileDepth);
+    const geometry = new THREE.CylinderGeometry( Config.tileHeight/2, Config.tileHeight/2, Config.tileWidth, 8);
 
     for (let i = 0; i < Config.population; i++) {
       const hue = ColorManager.get(i);
@@ -18,11 +18,12 @@ class Floor3d extends THREE.Group {
         flatShading: true,
       });
 
-      const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.x = floor.x;
-      mesh.position.y = -floor.y;
-      mesh.position.z = -i * (Config.tileDepth + Config.tileDepthMargin);
-      this.add(mesh);
+      var cylinder = new THREE.Mesh(geometry, material);
+      cylinder.position.x = floor.x;
+      cylinder.position.y = -floor.y;
+      cylinder.position.z = -i * (Config.tileDepth + Config.tileDepthMargin);
+      cylinder.rotation.z = 90 * Math.PI/180;
+      this.add(cylinder);
     }
   }
 }

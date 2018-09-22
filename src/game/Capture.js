@@ -14,6 +14,10 @@ class Capture extends Phaser.State {
   }
 
   create() {
+    Scene3d.camera.near = 600;
+    Scene3d.camera.far = 20000;
+    Scene3d.camera.updateProjectionMatrix();
+
     ColorManager.shuffle();
 
     this.game.spectrogram = Audio.getSpectrogram();

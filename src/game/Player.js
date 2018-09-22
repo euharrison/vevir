@@ -21,8 +21,7 @@ class Player extends Phaser.Sprite {
     this.level = level;
     this.index = index;
     this.score = 0;
-    this.jumpTimer = 0;
-    this.jumpCount = 0;
+    this.coins = 0;
 
     this.humanControl = Config.humanControl && index === 0;
     if (this.humanControl) {
@@ -64,7 +63,7 @@ class Player extends Phaser.Sprite {
     }
 
     // TODO usar o player.body.onFloor()
-    if (this.cursors.up.isDown && this.body.touching.down && this.game.time.now > this.jumpTimer) {
+    if (this.cursors.up.isDown && this.body.touching.down) {
       this.jump();
     }
   }
@@ -80,16 +79,13 @@ class Player extends Phaser.Sprite {
       this.body.velocity.x = -Config.playerVelocity;
     }
 
-    if (brain.jump && this.body.touching.down && this.game.time.now > this.jumpTimer) {
+    if (brain.jump && this.body.touching.down) {
       this.jump();
     }
   }
 
   jump() {
-    this.jumpCount++;
-
     this.body.velocity.y = -Config.playerJump;
-    this.jumpTimer = this.game.time.now + (Config.playerJump * 1.5);
   }
 
   computeAI(debug) {
@@ -153,12 +149,27 @@ class Player extends Phaser.Sprite {
   }
 
   getNextEnemyX() {
-    const playerX = this.position.x;
-    const children = this.level.enemies[this.index].children;
-    const forwards = children.filter(w => w.position.x > playerX);
     let closerX = Infinity;
-    forwards.forEach(w => {
-      closerX = Math.min(closerX, w.position.x);
+    this.level.enemies[this.index].children.forEach(item => {
+      if (
+        item.position.x > this.position.x &&
+        item.position.x < closerX
+      ) {
+        closerX = item.position.x;
+      }
+    });
+    return closerX;
+  }
+
+  getNextFloorX() {
+    let closerX = Infinity;
+    this.level.floors.children.forEach(item => {
+      if (
+        item.position.x > this.position.x &&
+        item.position.x < closerX
+      ) {
+        closerX = item.position.x;
+      }
     });
     return closerX;
   }
@@ -172,12 +183,13 @@ class Player extends Phaser.Sprite {
   }
 
   getScore() {
-    return this.position.x * this.position.x; // - (this.jumpCount * 10);
+    return Math.pow((
+      this.position.x +
+      this.coins * (Config.horizontalTiles * Config.tileWidth * 0.5)
+    )/1000, 2);
   }
 
   onRemove() {
-    // TODO usar a position.x e a quantidade de moedas como score
-    // console.log('JUMP', this.jumpCount, this.position.x, this.getScore())
     AI.setScore(this.index, this.getScore());
 
     Scene3d.remove(this.player3d);

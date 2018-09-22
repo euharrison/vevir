@@ -10,8 +10,10 @@ class AI {
 
 			// elitism: 0.5, // Best networks kepts unchanged for the next
 
-			historic: 5,
-			lowHistoric: true,
+			historic: 10,
+
+			// historic: 5,
+			// lowHistoric: true,
 
 			// // various factors and parameters (along with default values).
 			// network: [1, [1], 1], // Perceptron network structure (1 hidden
