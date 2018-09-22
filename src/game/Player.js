@@ -89,50 +89,22 @@ class Player extends Phaser.Sprite {
   }
 
   computeAI(debug) {
-    // TODO
-    // local da moeda mais próxima
-    // local do inimigo mais próximo
-    // relevo a frente e p tras
-    // se pode ou não pular
+    const enemyX = this.getNearstX(this.level.enemies[this.index]);
+    const enemyDist = enemyX - this.position.x;
+    const enemyPercent = Math.min(enemyDist/400, 1);
 
-    const playerX = this.position.x;
-    const playerY = this.position.y;
+    const floorX = this.getNearstX(this.level.floors);
+    const floorDist = floorX - this.position.x;
+    const floorPercent = Math.min(floorDist/400, 1);
 
-    // TODO pegar a coin mais perto
-    const coin = { position:{ x: 100, y: 100 } };//this.level.coins.children[0];
-    const coinX = coin.position.x;
-    const coinY = coin.position.y;
+    const coinX = this.getNearstX(this.level.coins[this.index]);
+    const coinDist = coinX - this.position.x;
+    const coinPercent = Math.min(coinDist/400, 1);
 
-    const coinDistanceX = (coinX - playerX) / this.game.world.width;
-    const coinDistanceY = (coinY - playerY) / this.game.world.height;
-
-    const forwards = this.level.floors.children.filter(w => w.position.x > playerX);
-
-    let closerX = Infinity;
-    forwards.forEach(w => {
-      closerX = Math.min(closerX, w.position.x);
-    });
-
-    const neighbors = forwards.filter(w => w.position.x === closerX);
-
-    let yDest = Config.gameHeight;
-    neighbors.forEach(w => {
-      yDest = Math.min(yDest, w.position.y);
-    });
-
-    // TODO entender melhor o comportamento da rede, pois nemo Math.random está deixando "aleatório"
     const input = [
-      // playerY / Config.gameHeight,
-      // yDest / Config.gameHeight,
-
-      // playerX / Config.gameWidth,
-      // this.getNextEnemyX() / Config.gameWidth,
-
-      this.getInput(),
-
-      // coinDistanceX,
-      // coinDistanceY,
-      // can jump
+      enemyPercent,
+      // floorPercent,
+      // coinPercent,
     ];
 
     const output = AI.compute(this.index, input).map(o => Math.round(o));
@@ -148,7 +120,7 @@ class Player extends Phaser.Sprite {
     };
   }
 
-  getNextEnemyX() {
+  getNearstX() {
     let closerX = Infinity;
     this.level.enemies[this.index].children.forEach(item => {
       if (
@@ -159,27 +131,6 @@ class Player extends Phaser.Sprite {
       }
     });
     return closerX;
-  }
-
-  getNextFloorX() {
-    let closerX = Infinity;
-    this.level.floors.children.forEach(item => {
-      if (
-        item.position.x > this.position.x &&
-        item.position.x < closerX
-      ) {
-        closerX = item.position.x;
-      }
-    });
-    return closerX;
-  }
-
-  getInput() {
-    let playerDist = (this.getNextEnemyX() - this.position.x);
-    if (playerDist > 400) {
-      playerDist = 400;
-    }
-    return playerDist / 400;
   }
 
   getScore() {
