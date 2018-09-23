@@ -27,7 +27,7 @@ class Capture extends Phaser.State {
 
     this.game.spectrogram = Audio.getSpectrogram();
 
-    this.spec3d = new Spectrogram3d(this.game.spectrogram.length);
+    this.spec3d = new Spectrogram3d();
     Scene3d.add(this.spec3d);
 
     this.level = new Level(this.game);
@@ -43,13 +43,13 @@ class Capture extends Phaser.State {
       Config.captureTime / Config.horizontalTiles
     );
 
-    this.cameraDistance = 2300;
+    this.cameraDistance = 2000;
 
     anime({
       targets: this.game.camera,
       duration: Config.captureTime,
       easing: 'linear',
-      x: [-this.cameraDistance, (Config.horizontalTiles * Config.tileWidth) - this.cameraDistance],// - 3000 - 10000,
+      x: [-this.cameraDistance, (Config.horizontalTiles * Config.tileWidth) - this.cameraDistance],
     })
   }
 
@@ -101,10 +101,9 @@ class Capture extends Phaser.State {
     }
 
     // TODO podemos fixar os numeros do audio ao inves de normalizar?
-    // if (Audio.getVolume() > 170) {
-    // if (Audio.getVolume() > 0.8) {
     if (type) {
-      tiles.push({ type, x, y: Math.random() * maxY });
+      const yPerSimulation = this.spec3d.floor3d.children.map(c => -c.position.y);
+      tiles.push({ type, x, y: 0, yPerSimulation });
     }
 
     tiles.forEach((tile) => this.level.createTile(tile));

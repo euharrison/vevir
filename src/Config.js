@@ -6,7 +6,8 @@ const config = {
   showFPS: false,
 
   // fftSize for audio buffer length
-  fftSize: 256 * 2,
+  // fftSize: 256 * 2,
+  fftSize: 128,
 
   // time to capture audio and create the level
   captureTime: 10 * 1000,

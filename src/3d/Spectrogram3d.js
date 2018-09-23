@@ -9,20 +9,36 @@ class Spectrogram3d extends THREE.Group {
   constructor() {
     super();
 
-    this.floor3d = new Floor3d({ x: Config.tileWidth, y: 0 });
+    this.floor3d = new Floor3d({ x: -Config.tileWidth, y: 0 });
+    // this.floor3d = new Floor3d({ x: 0, y: 0 });
     this.add(this.floor3d);
   }
 
   update(data) {
     this.dataSize = data.length;
 
-    this.floor3d.children.forEach((floor, index) => {
-      const value = data[index] || 0;
-      const scale = MathUtils.map(value, 0, 200, 1, 20);
-      // floor.scale.set(scale, 1, 1);
+    const minY = Config.verticalTiles * 2;
+    const maxY = Config.verticalTiles * (Config.tileHeight - 2);
 
-      const y = Config.verticalTiles * Config.tileHeight;
-      floor.position.y = -y + (scale * Config.tileHeight/2) - 10;
+    this.floor3d.children.forEach((floor, index) => {
+      let value = data[index] || 0;
+
+      // debug max values
+      // if (index === 0) {
+      //   value = 0;
+      // } else if (index === 1) {
+      //   value = 250;
+      // }
+
+      let y = MathUtils.map(value, 0, 250, minY, maxY);
+      if (y < minY) {
+        y = minY;
+      }
+      if (y > maxY) {
+        y = maxY;
+      }
+
+      floor.position.y = y;
     })
   }
 }

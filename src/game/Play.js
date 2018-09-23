@@ -20,6 +20,8 @@ class Play extends Phaser.State {
     Scene3d.camera.far = 20000;
     Scene3d.camera.updateProjectionMatrix();
 
+    ColorManager.shuffle();
+
     this.game.camera.x = -300;
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 

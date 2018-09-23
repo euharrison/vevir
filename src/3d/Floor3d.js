@@ -7,7 +7,12 @@ class Floor3d extends THREE.Group {
   constructor(floor) {
     super();
 
-    const geometry = new THREE.CylinderGeometry( Config.tileHeight/2, Config.tileHeight/2, Config.tileWidth, 8);
+    const geometry = new THREE.CylinderGeometry(
+      Config.tileHeight,
+      Config.tileHeight,
+      Config.tileWidth * 0.3,
+      8
+    );
 
     for (let i = 0; i < Config.population; i++) {
       const hue = ColorManager.get(i);

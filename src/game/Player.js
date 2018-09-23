@@ -5,7 +5,9 @@ import Scene3d from '../3d/Scene3d';
 
 class Player extends Phaser.Sprite {
   constructor(index, game, level) {
-    super(game, 50, 0);
+    const maxY = Config.verticalTiles * Config.tileHeight;
+
+    super(game, 50, maxY/2);
 
     this.width = Config.tileHeight;
     this.height = Config.tileHeight;
