@@ -5,7 +5,7 @@ import Scene3d from '../3d/Scene3d';
 
 class Player extends Phaser.Sprite {
   constructor(index, game, level) {
-    super(game, 50, Config.verticalTiles * Config.tileHeight / 2);
+    super(game, 50, 0);
 
     this.width = Config.tileHeight;
     this.height = Config.tileHeight;

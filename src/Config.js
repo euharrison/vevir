@@ -15,7 +15,7 @@ const config = {
   humanControl: false,
 
   // amount of players in the same game, don't set < 3, it will crash the app
-  population: 10,
+  population: 14,
 
   // time to auto restart level
   restartTime: 9999 * 1000,

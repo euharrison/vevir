@@ -10,7 +10,7 @@ class AI {
 
 			// elitism: 0.5, // Best networks kepts unchanged for the next
 
-			historic: 10,
+			historic: 20,
 
 			// historic: 5,
 			// lowHistoric: true,

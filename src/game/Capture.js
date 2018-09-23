@@ -39,23 +39,24 @@ class Capture extends Phaser.State {
       this.createTile.bind(this),
       Config.captureTime / Config.horizontalTiles
     );
+
+    this.cameraDistance = 2300;
+
+    anime({
+      targets: this.game.camera,
+      duration: Config.captureTime,
+      easing: 'linear',
+      x: [-this.cameraDistance, (Config.horizontalTiles * Config.tileWidth) - this.cameraDistance],// - 3000 - 10000,
+    })
   }
 
   update() {
-    const floors = this.level.floors.children;
-    const lastFloor = floors[floors.length-1];
-
-    if (this.column < Config.horizontalTiles) {
-      this.game.camera.x = -1300 + (lastFloor ? lastFloor.x : 0);
-    }
-
     Scene3d.updateCamera(this.camera);
 
     this.game.spectrogram = Audio.getSpectrogram();
 
     this.spec3d.update(this.game.spectrogram);
-    // this.spec3d.position.x = this.game.camera.x;
-    this.spec3d.position.x = lastFloor ? lastFloor.x : 0;
+    this.spec3d.position.x = this.game.camera.x + this.cameraDistance;
   }
 
   render() {
@@ -68,20 +69,41 @@ class Capture extends Phaser.State {
     const maxY = Config.verticalTiles * Config.tileHeight;
 
     // top/bottom tiles to hit world bounds
+    // TODO remove it, we don't need it anymore
     const tiles = [
       { type: 'wall', x, y: 0 - Config.tileHeight },
       { type: 'wall', x, y: maxY + Config.tileHeight },
     ];
 
+    let type = '';
+    const progressPercent = this.column / Config.horizontalTiles;
+
+    // phase 1, fly 
+    if (progressPercent < 0.1) {
+      // 
+    }
+    // phase 2, checkpoints 
+    else if (progressPercent < 0.3) {
+      type = 'checkpoint';
+    }
+    // phase 3, enemies 
+    else if (progressPercent < 0.5) {
+      const types = ['enemy', 'checkpoint'];
+      type = types[this.column % 2];
+    }
+    // phase 4, coins 
+    else {
+      const types = ['coin', 'enemy', 'checkpoint'];
+      type = types[this.column % 3];
+    }
+
     // TODO podemos fixar os numeros do audio ao inves de normalizar?
     // if (Audio.getVolume() > 170) {
     // if (Audio.getVolume() > 0.8) {
-    if (this.column > 3 && this.column % 2 == 0) {
-      tiles.push({ type: 'checkpoint', x, y: Math.random() * maxY });
+    if (type) {
+      tiles.push({ type, x, y: Math.random() * maxY });
     }
-    if (this.column > 3 && this.column % 2 == 1) {
-      tiles.push({ type: 'coin', x, y: Math.random() * maxY });
-    }
+
     tiles.forEach((tile) => this.level.createTile(tile));
 
     this.game.tiles.push(...tiles);

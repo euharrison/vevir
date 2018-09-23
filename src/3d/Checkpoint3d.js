@@ -15,7 +15,7 @@ class Checkpoint3d extends THREE.Group {
     });
 
     const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.x = checkpoint.position.x;
+    mesh.position.x = checkpoint.position.x + 100;
     mesh.position.y = -checkpoint.position.y + (Config.tileHeight*1);
     mesh.position.z = -index * (Config.tileDepth + Config.tileDepthMargin);
     mesh.rotation.y = 90 * Math.PI/180;

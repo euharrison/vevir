@@ -24,25 +24,25 @@ class Player3d extends THREE.Group {
     const triangles = [
       // wing left
       [
-        100, 0, -2.5,
+        100, 0, 0,
         0,   0, -2.5,
         0,   -10, -30,
       ],
       // wing-nail left 
       [
-        100, 0, -2.5,
+        100, 0, 0,
         0,   -5, -30,
         0,   -10, -30,
       ],
       // wing right
       [
-        100, 0, 2.5,
+        100, 0, 0,
         0,   0, 2.5,
         0,   -10, 30,
       ],
       // wing-nail right
       [
-        100, 0, 2.5,
+        100, 0, 0,
         0,   -5, 30,
         0,   -10, 30,
       ],

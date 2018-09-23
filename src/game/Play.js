@@ -14,7 +14,7 @@ class Play extends Phaser.State {
 
   create() {
     Scene3d.camera.near = 600;
-    Scene3d.camera.far = 2000;
+    Scene3d.camera.far = 20000;
     Scene3d.camera.updateProjectionMatrix();
 
     this.game.camera.x = -300;
