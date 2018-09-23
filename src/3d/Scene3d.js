@@ -64,7 +64,7 @@ class Scene3d extends THREE.Scene {
     this.camera.rotation.y = -90 * Math.PI/180;
 
     this.camera.position.x = camera.position.x + camera.view.width/2 - 600;
-    this.camera.position.y = -200;
+    this.camera.position.y = 150;
     this.camera.position.z = (-Config.population+1) * (Config.tileDepth+Config.tileDepthMargin) / 2;
   }
 

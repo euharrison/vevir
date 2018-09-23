@@ -19,12 +19,17 @@ const boot = {
   preload: function() {
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.time.advancedTiming = true;
-    game.world.setBounds(0, 0, Config.tileWidth*Config.horizontalTiles, Config.tileHeight*Config.verticalTiles);
+    game.world.setBounds(
+      0,
+      -Config.tileHeight,
+      Config.tileWidth * Config.horizontalTiles,
+      Config.tileHeight * (Config.verticalTiles + 2)
+    );
     game.camera.bounds = null;
   },
   create: function() {
-    // game.state.start('capture');
-    game.state.start('play');
+    game.state.start('capture');
+    // game.state.start('play');
   },
 }
 

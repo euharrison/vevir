@@ -41,6 +41,7 @@ class Play extends Phaser.State {
     for (let i = 0; i < Config.population; i++) {
       this.game.physics.arcade.overlap(this.players.children[i], this.level.coins[i], this.takeCoin, null, this);
       this.game.physics.arcade.overlap(this.players.children[i], this.level.enemies[i], this.killPlayer, null, this);
+      this.game.physics.arcade.overlap(this.players.children[i], this.level.checkpoints[i], this.takeCheckpoint, null, this);
     }
 
     this.firstPlayer = null;
@@ -59,8 +60,6 @@ class Play extends Phaser.State {
     } else {
       this.game.camera.follow(this.firstPlayer, undefined, 0.05, 0.05);
     }
-
-    // TODO verificar se o first player está muito tempo parado no msm lugar, se sim, restart
 
     Scene3d.updateCamera(this.camera);
   }
@@ -100,6 +99,12 @@ class Play extends Phaser.State {
 
   killPlayer(player, enemy) {
     player.kill();
+  }
+
+  takeCheckpoint(player, checkpoint) {
+    checkpoint.kill();
+    console.log('takeCheckpoint')
+    player.checkpoints++;
   }
 
   restart() {

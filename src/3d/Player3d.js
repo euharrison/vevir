@@ -75,7 +75,7 @@ class Player3d extends THREE.Group {
     const mesh = new THREE.Mesh(geometry, material);
     this.add(mesh);
     
-    const scale = 1.2;
+    const scale = 1.1;
     this.scale.set(scale, scale, scale);
 
     this.position.z = -index * (Config.tileDepth + Config.tileDepthMargin);

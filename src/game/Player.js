@@ -5,7 +5,7 @@ import Scene3d from '../3d/Scene3d';
 
 class Player extends Phaser.Sprite {
   constructor(index, game, level) {
-    super(game, 50, (Config.verticalTiles-3) * Config.tileHeight);
+    super(game, 50, 50);
 
     this.width = Config.tileHeight;
     this.height = Config.tileHeight;
@@ -22,6 +22,7 @@ class Player extends Phaser.Sprite {
     this.index = index;
     this.score = 0;
     this.coins = 0;
+    this.checkpoints = 0;
 
     this.humanControl = Config.humanControl && index === 0;
     if (this.humanControl) {
@@ -39,6 +40,10 @@ class Player extends Phaser.Sprite {
   update() {
     if (!this.alive) {
       return;
+    }
+
+    if (this.missedCheckpoints()) {
+      this.kill();
     }
 
     this.game.debug.body(this, '#0000ff');
@@ -62,7 +67,6 @@ class Player extends Phaser.Sprite {
       this.body.velocity.x = -Config.playerVelocity;
     }
 
-    // TODO usar o player.body.onFloor()
     if (this.cursors.up.isDown && this.body.touching.down) {
       this.jump();
     }
@@ -89,30 +93,34 @@ class Player extends Phaser.Sprite {
   }
 
   computeAI(debug) {
-    const enemy = this.getNearst(this.level.enemies[this.index]);
-    const enemyDist = enemy.position.x - this.position.x;
-    const enemyPercent = Math.min(enemyDist/Config.tileWidth, 1);
+    const maxY = Config.verticalTiles * Config.tileHeight;
 
-    // const floor = this.getNearst(this.level.floors);
-    // const floorDist = floor.position.x - this.position.x;
-    // const floorPercent = Math.min(floorDist/100, 1);
+    const nearst = this.getNearst();
 
-    const coin = this.getNearst(this.level.coins[this.index]);
-    const coinDist = coin.position.x - this.position.x;
-    const coinPercent = Math.min(coinDist/Config.tileWidth, 1);
+    const percentX = (nearst.x - this.position.x) / Config.tileWidth;
+    const inputX = Math.max(Math.min(percentX, 1), 0);
 
-    let dist = 1;
-    let type = 0;
-    if (enemyDist < 1) {
-      dist = enemyDist;
-      type = 0.5;
-    } else if (coinDist < 1) {
-      dist = coinDist;
-      type = 1;
+    const percentY = (nearst.y - this.position.y) / maxY;
+    const inputY = (Math.max(Math.min(percentY, 1), -1) + 1) / 2;
+    
+    // const nearstDist = nearst.y - this.position.y;
+    // const enemyPercent = Math.min(enemyDist/Config.tileWidth, 1);
+
+    const typeValues = {
+      'coin': 0,
+      'enemy': 0.5,
+      'checkpoint': 1,
     }
 
+    const playerY = this.position.y / maxY;
+    const nearstY = nearst.y / maxY;
+    const type = typeValues[nearst.type];
+
     const input = [
-      dist,
+      inputX,
+      // inputY,
+      // playerY,
+      // nearstY,
       type,
     ];
 
@@ -120,7 +128,12 @@ class Player extends Phaser.Sprite {
 
     // if (debug) {
     if (this.index === 0) {
-      // console.log(output, input)
+
+    // console.log(maxY, this.position.y)
+    //max player y = 380
+      // console.log(this.hasAllCheckpoints())
+      // console.log(this.position.x, this.checkpoints)
+      // if (Math.random() < 0.3) console.log(output, input)
     }
 
     return {
@@ -130,17 +143,20 @@ class Player extends Phaser.Sprite {
     };
   }
 
-  getNearst(group) {
-    let closer = { position: { x: Infinity, y: Infinity } };
-    group.children.forEach(item => {
-      if (
-        item.position.x > this.position.x &&
-        item.position.x < closer.position.x
-      ) {
-        closer = item;
+  missedCheckpoints() {
+    const checkpointsBehind = this.level.tiles.filter(t => t.type === 'checkpoint' && (t.x+100) < this.x).length;
+    const checkpointsMissings = checkpointsBehind - this.checkpoints;
+    return (checkpointsMissings > 0);
+  }
+
+  getNearst() {
+    let nearst = { x: Infinity, y: Infinity };
+    this.level.tiles.filter(t => t.type !== 'wall').forEach(item => {
+      if (item.x > this.x && item.x < nearst.x) {
+        nearst = item;
       }
     });
-    return closer;
+    return nearst;
   }
 
   getScore() {

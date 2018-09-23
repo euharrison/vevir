@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 import Config from '../Config';
 import Coin from './Coin';
 import Enemy from './Enemy';
+import Checkpoint from './Checkpoint';
 import Floor from './Floor';
 import Scene3d from '../3d/Scene3d';
 
@@ -10,13 +11,18 @@ class Level extends Phaser.Group {
   constructor(game) {
     super(game);
 
+    this.tiles = [];
+
     this.floors = this.game.add.group();
 
     this.coins = [];
     this.enemies = [];
+    this.checkpoints = [];
+
     for (let i = 0; i < Config.population; i++) {
       this.coins.push(this.game.add.group());
       this.enemies.push(this.game.add.group());
+      this.checkpoints.push(this.game.add.group());
     }
   }
 
@@ -93,24 +99,35 @@ class Level extends Phaser.Group {
   }
 
   createTile(tile) {
+    this.tiles.push(tile);
+
     switch (tile.type) {
       case 'wall':
-        if (tile.y < 380) break; // nao cria o segundo andar
         const floor = new Floor(this.game, tile.x, tile.y);
         this.floors.add(floor);
         break;
 
       case 'coin':
         for (let i = 0; i < Config.population; i++) {
-          const coin = new Coin(this.game, tile.x + Math.random()*Config.tileWidth, tile.y, i);
+          // const coin = new Coin(this.game, tile.x + Math.random()*Config.tileWidth/2, tile.y, i);
+          const coin = new Coin(this.game, tile.x, tile.y, i);
           this.coins[i].add(coin);
         }
         break;
 
       case 'enemy':
         for (let i = 0; i < Config.population; i++) {
-          const enemy = new Enemy(this.game, tile.x + Math.random()*Config.tileWidth, tile.y, i);
+          // const enemy = new Enemy(this.game, tile.x + Math.random()*Config.tileWidth/2, tile.y, i);
+          const enemy = new Enemy(this.game, tile.x, tile.y, i);
           this.enemies[i].add(enemy);
+        }
+        break;
+
+      case 'checkpoint':
+        for (let i = 0; i < Config.population; i++) {
+          // const checkpoint = new Checkpoint(this.game, tile.x + Math.random()*Config.tileWidth/2, tile.y, i);
+          const checkpoint = new Checkpoint(this.game, tile.x, tile.y, i);
+          this.checkpoints[i].add(checkpoint);
         }
         break;
     }
@@ -119,6 +136,7 @@ class Level extends Phaser.Group {
   removeSimulation(index) {
     this.coins[index].killAll();
     this.enemies[index].killAll();
+    this.checkpoints[index].killAll();
   }
 }
 

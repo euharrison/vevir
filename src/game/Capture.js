@@ -30,13 +30,7 @@ class Capture extends Phaser.State {
     const x = this.column * Config.tileWidth;
     const y = Config.verticalTiles * Config.tileHeight;
 
-    this.game.tiles = [
-      { type: 'wall', x, y: y },
-      { type: 'wall', x, y: y },
-    ];
-
-    const tiles = [
-    ];
+    this.game.tiles = [];
 
     this.column = 0;
     this.intervalId = setInterval(
@@ -69,23 +63,22 @@ class Capture extends Phaser.State {
 
   createTile() {
     const x = this.column * Config.tileWidth;
-    const y = Config.verticalTiles * Config.tileHeight;
+    const maxY = Config.verticalTiles * Config.tileHeight;
 
+    // top/bottom tiles to hit world bounds
     const tiles = [
-      { type: 'wall', x, y: y },
+      { type: 'wall', x, y: 0 - Config.tileHeight },
+      { type: 'wall', x, y: maxY + Config.tileHeight },
     ];
 
     // TODO podemos fixar os numeros do audio ao inves de normalizar?
     // if (Audio.getVolume() > 170) {
     // if (Audio.getVolume() > 0.8) {
-    if (Math.random() > 0.8) {
-      // tiles.push({ type: 'wall', x, y: y - (4 * Config.tileHeight) });
+    if (this.column > 3 && this.column % 2 == 0) {
+      tiles.push({ type: 'checkpoint', x, y: Math.random() * maxY });
     }
-    if (Math.random() < 0.3 && x > 1000 && this.column % 2 == 0) {
-      tiles.push({ type: 'coin', x, y: y - (1 * Config.tileHeight) });
-    }
-    if (Math.random() < 0.3 && x > 1000 && this.column % 2 == 1) {
-      tiles.push({ type: 'enemy', x, y: y - (1 * Config.tileHeight) });
+    if (this.column > 3 && Math.random() < 0.3 && this.column % 2 == 1) {
+      // tiles.push({ type: 'coin', x, y: y - (2 * Config.tileHeight) });
     }
     tiles.forEach((tile) => this.level.createTile(tile));
 
