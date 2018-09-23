@@ -65,10 +65,11 @@ const configDev = merge(common, {
     publicPath: '/build/',
     hot: true,
     open: true,
+    // https: true,
     // You can set `host` to your IP to share the development url through network
     // Useful when you want to test on mobile devices or other machines, like windows
     // Example:
-    // host: '192.168.1.14',
+    // host: '192.168.2.11',
   },
   plugins: [
     new webpack.NamedModulesPlugin(),

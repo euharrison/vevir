@@ -1,6 +1,6 @@
 const config = {
   // ignore phaser render engine for better performance
-  devMode: false,
+  devMode: true,
 
   // show fps rate
   showFPS: false,

@@ -82,7 +82,7 @@ class Play extends Phaser.State {
 
 
     this.players.children.forEach((p, i) => {
-      if (p.alive) this.game.debug.text(`${p.getNextEnemyX()}`, 220, 120 + i*20);
+      // if (p.alive) this.game.debug.text(`${p.getNextEnemyX()}`, 220, 120 + i*20);
     })
 
     if (this.firstPlayer) {

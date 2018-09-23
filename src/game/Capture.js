@@ -79,7 +79,7 @@ class Capture extends Phaser.State {
     // if (Audio.getVolume() > 170) {
     // if (Audio.getVolume() > 0.8) {
     if (Math.random() > 0.8) {
-      tiles.push({ type: 'wall', x, y: y - (4 * Config.tileHeight) });
+      // tiles.push({ type: 'wall', x, y: y - (4 * Config.tileHeight) });
     }
     if (Math.random() < 0.3 && x > 1000 && this.column % 2 == 0) {
       tiles.push({ type: 'coin', x, y: y - (1 * Config.tileHeight) });

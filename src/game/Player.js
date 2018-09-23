@@ -89,17 +89,17 @@ class Player extends Phaser.Sprite {
   }
 
   computeAI(debug) {
-    const enemyX = this.getNearstX(this.level.enemies[this.index]);
-    const enemyDist = enemyX - this.position.x;
-    const enemyPercent = Math.min(enemyDist/400, 1);
+    const enemy = this.getNearst(this.level.enemies[this.index]);
+    const enemyDist = enemy.position.x - this.position.x;
+    const enemyPercent = Math.min(enemyDist/Config.tileWidth, 1);
 
-    const floorX = this.getNearstX(this.level.floors);
-    const floorDist = floorX - this.position.x;
-    const floorPercent = Math.min(floorDist/400, 1);
+    // const floor = this.getNearst(this.level.floors);
+    // const floorDist = floor.position.x - this.position.x;
+    // const floorPercent = Math.min(floorDist/100, 1);
 
-    const coinX = this.getNearstX(this.level.coins[this.index]);
-    const coinDist = coinX - this.position.x;
-    const coinPercent = Math.min(coinDist/400, 1);
+    // const coin = this.getNearst(this.level.coins[this.index]);
+    // const coinDist = coin.position.x - this.position.x;
+    // const coinPercent = Math.min(coinDist/100, 1);
 
     const input = [
       enemyPercent,
@@ -110,7 +110,8 @@ class Player extends Phaser.Sprite {
     const output = AI.compute(this.index, input).map(o => Math.round(o));
 
     if (debug) {
-      // console.log(output, input)
+    // if (this.index === 0) {
+      console.log(output, input)
     }
 
     return {
@@ -120,17 +121,17 @@ class Player extends Phaser.Sprite {
     };
   }
 
-  getNearstX() {
-    let closerX = Infinity;
-    this.level.enemies[this.index].children.forEach(item => {
+  getNearst(group) {
+    let closer = { position: { x: Infinity, y: Infinity } };
+    group.children.forEach(item => {
       if (
         item.position.x > this.position.x &&
-        item.position.x < closerX
+        item.position.x < closer.position.x
       ) {
-        closerX = item.position.x;
+        closer = item;
       }
     });
-    return closerX;
+    return closer;
   }
 
   getScore() {
