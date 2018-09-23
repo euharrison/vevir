@@ -83,6 +83,11 @@ function getVolume() {
   const sumVolume = spectrogram.reduce((result, value) => result + value);
   const volume = sumVolume / spectrogram.length;
 
+  return volume;
+}
+
+function getNormalizedVolume() {
+  const volume = getVolume();
   maxVolumeFound = Math.max(maxVolumeFound, volume);
   const normalizedVolume = Math.max(0, Math.min(1, volume / maxVolumeFound));
 

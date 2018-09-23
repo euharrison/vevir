@@ -1,5 +1,6 @@
 import Config from '../Config';
 import AI from './AI';
+import Audio from './Audio';
 import Player from './Player';
 import Level from './Level';
 import ColorManager from '../3d/ColorManager';
@@ -62,6 +63,19 @@ class Play extends Phaser.State {
     }
 
     Scene3d.updateCamera(this.camera);
+
+    // back to capture mode if speak loud
+    const volume = Audio.getVolume();
+    if (volume > 30) {
+      if (!this.audioTimeout) {
+        this.audioTimeout = setTimeout(() => {
+          this.game.state.start('capture');
+        }, 500);
+      }
+    } else {
+      clearTimeout(this.audioTimeout);
+      this.audioTimeout = null;
+    }
   }
 
   render() {
