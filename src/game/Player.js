@@ -108,22 +108,22 @@ class Player extends Phaser.Sprite {
     // const nearstDist = nearst.y - this.position.y;
     // const enemyPercent = Math.min(enemyDist/Config.tileWidth, 1);
 
-    const typeValues = {
-      'coin': 0,
-      'enemy': 0.5,
-      'checkpoint': 1,
+    const bonusValue = {
+      'coin': 0.9999,
+      'enemy': 0.0001,
+      'checkpoint': 0.9999,
     }
 
     const playerY = this.position.y / maxY;
     const nearstY = nearst.y / maxY;
-    const type = typeValues[nearst.type];
+    const bonus = bonusValue[nearst.type];
 
     const input = [
       // inputX,
       // inputY,
       playerY,
       nearstY,
-      type,
+      bonus,
     ];
 
     const output = AI.compute(this.index, input).map(o => Math.round(o));
