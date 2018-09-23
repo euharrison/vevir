@@ -5,7 +5,7 @@ import Scene3d from '../3d/Scene3d';
 
 class Player extends Phaser.Sprite {
   constructor(index, game, level) {
-    super(game, 50, 50);
+    super(game, 50, Config.verticalTiles * Config.tileHeight / 2);
 
     this.width = Config.tileHeight;
     this.height = Config.tileHeight;
@@ -67,7 +67,8 @@ class Player extends Phaser.Sprite {
       this.body.velocity.x = -Config.playerVelocity;
     }
 
-    if (this.cursors.up.isDown && this.body.touching.down) {
+    // if (this.cursors.up.isDown && this.body.touching.down) {
+    if (this.cursors.up.isDown) {
       this.jump();
     }
   }
@@ -83,7 +84,8 @@ class Player extends Phaser.Sprite {
       this.body.velocity.x = -Config.playerVelocity;
     }
 
-    if (brain.jump && this.body.touching.down) {
+    // if (brain.jump && this.body.touching.down) {
+    if (brain.jump) {
       this.jump();
     }
   }
@@ -117,10 +119,10 @@ class Player extends Phaser.Sprite {
     const type = typeValues[nearst.type];
 
     const input = [
-      inputX,
+      // inputX,
       // inputY,
-      // playerY,
-      // nearstY,
+      playerY,
+      nearstY,
       type,
     ];
 
@@ -129,11 +131,12 @@ class Player extends Phaser.Sprite {
     // if (debug) {
     if (this.index === 0) {
 
-    // console.log(maxY, this.position.y)
-    //max player y = 380
+      // console.log(maxY, this.position.y)
+      //max player y = 380
       // console.log(this.hasAllCheckpoints())
       // console.log(this.position.x, this.checkpoints)
-      // if (Math.random() < 0.3) console.log(output, input)
+      // if (Math.random() < 0.3) 
+        // console.log(output, input)
     }
 
     return {

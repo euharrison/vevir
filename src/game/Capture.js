@@ -78,7 +78,7 @@ class Capture extends Phaser.State {
       tiles.push({ type: 'checkpoint', x, y: Math.random() * maxY });
     }
     if (this.column > 3 && Math.random() < 0.3 && this.column % 2 == 1) {
-      // tiles.push({ type: 'coin', x, y: y - (2 * Config.tileHeight) });
+      tiles.push({ type: 'coin', x, y: Math.random() * maxY });
     }
     tiles.forEach((tile) => this.level.createTile(tile));
 

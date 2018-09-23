@@ -36,7 +36,7 @@ class Play extends Phaser.State {
   }
 
   update() {
-    this.game.physics.arcade.collide(this.players, this.level.floors);
+    // this.game.physics.arcade.collide(this.players, this.level.floors);
 
     for (let i = 0; i < Config.population; i++) {
       this.game.physics.arcade.overlap(this.players.children[i], this.level.coins[i], this.takeCoin, null, this);

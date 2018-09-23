@@ -21,7 +21,7 @@ const config = {
   restartTime: 9999 * 1000,
 
   // tiles amount and sizes
-  verticalTiles: 5,
+  verticalTiles: 10,
   horizontalTiles: 30,
   tileWidth: 600,
   tileHeight: 20,
@@ -34,8 +34,8 @@ const config = {
 
   // how faster player can move
   playerVelocity: 800,
-  playerJump: 1200,
-  playerGravity: 6000,
+  playerJump: 200,
+  playerGravity: 600,
 }
 
 const params = new URLSearchParams(window.location.search);
