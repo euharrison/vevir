@@ -1,5 +1,6 @@
 import anime from 'animejs';
 
+import AI from './AI';
 import Config from '../Config';
 import Audio from './Audio';
 import Level from './Level';
@@ -19,6 +20,7 @@ class Capture extends Phaser.State {
     Scene3d.camera.updateProjectionMatrix();
 
     ColorManager.shuffle();
+    AI.setupNewAI();
 
     this.game.spectrogram = Audio.getSpectrogram();
 
@@ -77,7 +79,7 @@ class Capture extends Phaser.State {
     if (this.column > 3 && this.column % 2 == 0) {
       tiles.push({ type: 'checkpoint', x, y: Math.random() * maxY });
     }
-    if (this.column > 3 && Math.random() < 0.3 && this.column % 2 == 1) {
+    if (this.column > 3 && this.column % 2 == 1) {
       tiles.push({ type: 'coin', x, y: Math.random() * maxY });
     }
     tiles.forEach((tile) => this.level.createTile(tile));

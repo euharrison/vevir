@@ -1,7 +1,7 @@
 import Config from '../Config';
 
 class AI {
-	constructor() {
+	setupNewAI() {
 		this.generationAmount = 0;
 		this.neuvol = new Neuroevolution({
 			population: Config.population < 2 ? 2 : Config.population,
@@ -47,4 +47,7 @@ class AI {
 	}
 }
 
-export default new AI()
+const instance = new AI();
+instance.setupNewAI();
+
+export default instance;
