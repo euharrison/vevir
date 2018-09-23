@@ -1,6 +1,6 @@
 const config = {
   // ignore phaser render engine for better performance
-  devMode: true,
+  devMode: false,
 
   // show fps rate
   showFPS: false,
@@ -9,7 +9,10 @@ const config = {
   fftSize: 256 * 2,
 
   // time to capture audio and create the level
-  captureTime: 2 * 1000,
+  captureTime: 10 * 1000,
+
+  // if speak, change to capture mode
+  changeOnSpeak: true,
 
   // enable it to control one player with arrow keys
   humanControl: false,

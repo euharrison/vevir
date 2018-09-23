@@ -9,8 +9,6 @@ class Scene3d extends THREE.Scene {
   constructor() {
     super();
 
-    this.fog = new THREE.FogExp2( 0x000000, 0.00055 );
-
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight);
     this.add(this.camera);
 
@@ -70,8 +68,12 @@ class Scene3d extends THREE.Scene {
     this.camera.position.z = (-Config.population+1) * (Config.tileDepth+Config.tileDepthMargin) / 2;
   }
 
-  getMaxDeth() {
-    return ;
+  enableFog() {
+    this.fog = new THREE.FogExp2(0x000000, 0.00055);
+  }
+
+  disableFog() {
+    this.fog = null;
   }
 }
 

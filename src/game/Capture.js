@@ -1,4 +1,5 @@
 import anime from 'animejs';
+import * as THREE from 'three';
 
 import AI from './AI';
 import Config from '../Config';
@@ -15,6 +16,8 @@ class Capture extends Phaser.State {
   }
 
   create() {
+    Scene3d.disableFog();
+
     Scene3d.camera.near = 600;
     Scene3d.camera.far = 20000;
     Scene3d.camera.updateProjectionMatrix();
@@ -116,6 +119,8 @@ class Capture extends Phaser.State {
 
   finish() {
     clearTimeout(this.intervalId);
+
+    Scene3d.enableFog();
 
     Scene3d.remove(this.spec3d);
 

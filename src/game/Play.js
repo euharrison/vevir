@@ -14,6 +14,8 @@ class Play extends Phaser.State {
   }
 
   create() {
+    Scene3d.enableFog();
+
     Scene3d.camera.near = 600;
     Scene3d.camera.far = 20000;
     Scene3d.camera.updateProjectionMatrix();
@@ -66,7 +68,7 @@ class Play extends Phaser.State {
 
     // back to capture mode if speak loud
     const volume = Audio.getVolume();
-    if (volume > 30) {
+    if (Config.changeOnSpeak && volume > 30) {
       if (!this.audioTimeout) {
         this.audioTimeout = setTimeout(() => {
           this.game.state.start('capture');
@@ -117,7 +119,6 @@ class Play extends Phaser.State {
 
   takeCheckpoint(player, checkpoint) {
     checkpoint.kill();
-    console.log('takeCheckpoint')
     player.checkpoints++;
   }
 
