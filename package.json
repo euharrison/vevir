@@ -4,15 +4,20 @@
   "description": "",
   "author": "Harrison",
   "repository": "https://github.com/euharrison/vevir",
+  "main": "public/index.html",
   "scripts": {
     "dev": "webpack-dev-server",
-    "build": "NODE_ENV=production webpack"
+    "dev-nw": "concurrently -k \"webpack -w\" \"nw --dev\"",
+    "build": "NODE_ENV=production webpack",
+    "start-dev": "nw --dev",
+    "start": "nw"
   },
   "dependencies": {
     "animejs": "^2.2.0",
     "babel-polyfill": "^6.26.0",
     "d3": "^5.7.0",
     "jquery": "^3.3.1",
+    "nw": "0.31.5-sdk",
     "phaser-ce": "^2.10.0",
     "three": "^0.96.0"
   },
@@ -22,6 +27,7 @@
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.6.1",
     "clean-webpack-plugin": "^0.1.19",
+    "concurrently": "^4.0.1",
     "css-hot-loader": "^1.3.9",
     "css-loader": "^0.28.11",
     "mini-css-extract-plugin": "^0.4.0",

@@ -1,11 +1,23 @@
 import $ from 'jquery';
 
+import Env from './libs/Env';
+import Kiosk from './libs/Kiosk';
+import KeyboardShortcuts from './libs/KeyboardShortcuts';
+import DevTools from './libs/DevTools';
+
 import Config from './Config';
 import Capture from './game/Capture';
 import Play from './game/Play';
 import LevelSample from './game/LevelSample';
 
 import './scss/style.scss';
+
+if (Env.DEV) {
+  DevTools.open();
+}
+
+Kiosk.enter();
+KeyboardShortcuts.enable();
 
 const game = new Phaser.Game({
   width: Config.gameWidth,
