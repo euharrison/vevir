@@ -8,74 +8,74 @@ class Player3d extends THREE.Group {
   constructor(index) {
     super();
 
+    this.randomTime = Math.random() * 1000;
+
     const hue = ColorManager.get(index);
 
     const material = new THREE.MeshPhongMaterial({ 
       color: new THREE.Color(`hsl(${hue}, 50%, 50%)`),
       shininess: 30,
       flatShading: true,
+      side: THREE.DoubleSide,
     });
+
+    var geometry = new THREE.Geometry();
+
+    const triangles = [
+      // wing left
+      [
+        100, 0, -2.5,
+        0,   0, -2.5,
+        0,   -10, -30,
+      ],
+      // wing-nail left 
+      [
+        100, 0, -2.5,
+        0,   -5, -30,
+        0,   -10, -30,
+      ],
+      // wing right
+      [
+        100, 0, 2.5,
+        0,   0, 2.5,
+        0,   -10, 30,
+      ],
+      // wing-nail right
+      [
+        100, 0, 2.5,
+        0,   -5, 30,
+        0,   -10, 30,
+      ],
+      // base left
+      [
+        100, 0, -2.5,
+        0,   0, -2.5,
+        0,   -20, 0,
+      ],
+      // base right
+      [
+        100, 0, 2.5,
+        0,   0, 2.5,
+        0,   -20, 0,
+      ],
+    ];
+
+    for (let i = 0; i < triangles.length; i++) {
+      const t = triangles[i];
+      geometry.vertices.push(new THREE.Vector3(t[0], t[1], t[2]));
+      geometry.vertices.push(new THREE.Vector3(t[3], t[4], t[5]));
+      geometry.vertices.push(new THREE.Vector3(t[6], t[7], t[8]));
+      
+      geometry.faces.push(new THREE.Face3(i*3, i*3 + 1, i*3 + 2));
+    }
+
+    geometry.computeFaceNormals();
+    geometry.computeVertexNormals();
+
+    const mesh = new THREE.Mesh(geometry, material);
+    this.add(mesh);
     
-    const head = new THREE.Mesh( new THREE.SphereBufferGeometry( 100, 10, 7 ), material );
-    // obheadject.position.set( -300, 0, 200 );
-    // scene.add( head );
-
-    const eyeMaterial = new THREE.MeshPhongMaterial({ 
-      color: 0xffffff,
-      shininess: 30,
-      flatShading: true,
-    });
-
-    const eyeLeft = new THREE.Mesh( new THREE.SphereBufferGeometry( 40, 10, 7 ), eyeMaterial );
-    eyeLeft.rotation.x = Math.PI/2;
-    eyeLeft.position.set( -35, 25, 70 );
-
-    const eyeRight = new THREE.Mesh( new THREE.SphereBufferGeometry( 40, 10, 7 ), eyeMaterial );
-    eyeRight.rotation.x = Math.PI/2;
-    eyeRight.position.set( 35, 25, 70 );
-
-    const eyeDotMaterial = new THREE.MeshPhongMaterial({ 
-      color: 0x000000,
-      shininess: 30,
-      flatShading: true,
-    });
-
-    const eyeLeftDot = new THREE.Mesh( new THREE.SphereBufferGeometry( 11, 10, 7 ), eyeDotMaterial );
-    eyeLeftDot.rotation.x = Math.PI/2;
-    eyeLeftDot.position.set( -35, 25, 100 );
-
-    const eyeRightDot = new THREE.Mesh( new THREE.SphereBufferGeometry( 11, 10, 7 ), eyeDotMaterial );
-    eyeRightDot.rotation.x = Math.PI/2;
-    eyeRightDot.position.set( 35, 25, 100 );
-
-    const sickEyeMaterial = new THREE.MeshPhongMaterial({ 
-      color: 0xff0000,
-      shininess: 30,
-      flatShading: true,
-    });
-
-    const sickEye = new THREE.Mesh( new THREE.SphereBufferGeometry( 40, 10, 7 ), sickEyeMaterial );
-    sickEye.position.set( 35, 25, 70 );
-
-    const mouthMaterial = new THREE.MeshPhongMaterial({ 
-      color: new THREE.Color(`hsl(${hue}, 50%, 50%)`),
-      shininess: 30,
-      flatShading: true,
-    });
-
-    this.mouth = new THREE.Mesh( new THREE.TorusBufferGeometry( 20, 10, 10, 10 ), mouthMaterial );
-    this.mouth.rotation.x = 30 * Math.PI/180;
-    this.mouth.position.set( 0, -45, 82 );
-
-    this.add( head );
-    this.add( eyeLeft );
-    this.add( eyeRight );
-    this.add( eyeLeftDot );
-    this.add( eyeRightDot );
-    // human.add( sickEye );
-    this.add( this.mouth );
-
-    const scale = 0.4;
+    const scale = 1.2;
     this.scale.set(scale, scale, scale);
 
     this.position.z = -index * (Config.tileDepth + Config.tileDepthMargin);
@@ -88,15 +88,14 @@ class Player3d extends THREE.Group {
       return;
     }
 
-    const timerMouth = Date.now() * 0.01;
-    this.mouth.scale.y = MathUtils.map(Math.sin(timerMouth), -1, 1, 0.25, 1);
-
     this.position.x = player.x;
     this.position.y = -player.y + 30;
 
-    const yRot = (player.body.velocity.x < 0 ? -90 : 90) * Math.PI/180;
-    const xRot = MathUtils.map(player.body.deltaY(), 10, -10, 15, -15) * Math.PI/180;
-    const zRot = 0;
+    const time = Date.now() * 0.005 + this.randomTime;
+
+    const yRot = 0;
+    const xRot = Math.sin(time)*5 * Math.PI/180;
+    const zRot = MathUtils.map(player.body.deltaY(), 10, -10, -5, 5) * Math.PI/180;
 
     // https://github.com/mrdoob/three.js/issues/187#issuecomment-1066636
     this.quaternion.set(0, yRot, 0, 1).normalize();

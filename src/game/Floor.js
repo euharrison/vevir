@@ -13,8 +13,8 @@ class Floor extends Phaser.Sprite {
     this.body.immovable = true;
     this.body.allowGravity = false;
 
-    this.floor3d = new Floor3d(this);
-    Scene3d.add(this.floor3d);
+    // this.floor3d = new Floor3d(this);
+    // Scene3d.add(this.floor3d);
 
     this.events.onKilled.add(this.onRemove, this);
     this.events.onDestroy.add(this.onRemove, this);
@@ -29,7 +29,7 @@ class Floor extends Phaser.Sprite {
   }
 
   onRemove() {
-    Scene3d.remove(this.floor3d);
+    // Scene3d.remove(this.floor3d);
   }
 }
 

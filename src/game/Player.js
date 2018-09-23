@@ -97,21 +97,30 @@ class Player extends Phaser.Sprite {
     // const floorDist = floor.position.x - this.position.x;
     // const floorPercent = Math.min(floorDist/100, 1);
 
-    // const coin = this.getNearst(this.level.coins[this.index]);
-    // const coinDist = coin.position.x - this.position.x;
-    // const coinPercent = Math.min(coinDist/100, 1);
+    const coin = this.getNearst(this.level.coins[this.index]);
+    const coinDist = coin.position.x - this.position.x;
+    const coinPercent = Math.min(coinDist/Config.tileWidth, 1);
+
+    let dist = 1;
+    let type = 0;
+    if (enemyDist < 1) {
+      dist = enemyDist;
+      type = 0.5;
+    } else if (coinDist < 1) {
+      dist = coinDist;
+      type = 1;
+    }
 
     const input = [
-      enemyPercent,
-      // floorPercent,
-      // coinPercent,
+      dist,
+      type,
     ];
 
     const output = AI.compute(this.index, input).map(o => Math.round(o));
 
-    if (debug) {
-    // if (this.index === 0) {
-      console.log(output, input)
+    // if (debug) {
+    if (this.index === 0) {
+      // console.log(output, input)
     }
 
     return {
