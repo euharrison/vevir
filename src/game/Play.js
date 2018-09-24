@@ -37,7 +37,7 @@ class Play extends Phaser.State {
 
     AI.nextGeneration();
 
-    this.restartTimeoutId = setTimeout(() => this.restart(), Config.restartTime);
+    // this.restartTimeoutId = setTimeout(() => this.restart(), Config.restartTime);
   }
 
   update() {
@@ -69,17 +69,17 @@ class Play extends Phaser.State {
     Scene3d.updateCamera(this.camera);
 
     // back to capture mode if speak loud
-    const volume = Audio.getVolume();
-    if (Config.changeOnSpeak && volume > 30) {
-      if (!this.audioTimeout) {
-        this.audioTimeout = setTimeout(() => {
-          this.game.state.start('capture');
-        }, 500);
-      }
-    } else {
-      clearTimeout(this.audioTimeout);
-      this.audioTimeout = null;
-    }
+    // const volume = Audio.getVolume();
+    // if (Config.changeOnSpeak && volume > 30) {
+    //   if (!this.audioTimeout) {
+    //     this.audioTimeout = setTimeout(() => {
+    //       this.game.state.start('capture');
+    //     }, 500);
+    //   }
+    // } else {
+    //   clearTimeout(this.audioTimeout);
+    //   this.audioTimeout = null;
+    // }
   }
 
   render() {

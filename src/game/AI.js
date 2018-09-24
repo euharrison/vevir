@@ -2,6 +2,9 @@ import Config from '../Config';
 
 class AI {
 	setupNewAI() {
+	}
+
+	constructor() {
 		this.generationAmount = 0;
 		this.neuvol = new Neuroevolution({
 			population: Config.population < 2 ? 2 : Config.population,

@@ -23,6 +23,8 @@ class Spectrogram3d extends THREE.Group {
     this.floor3d.children.forEach((floor, index) => {
       let value = data[index] || 0;
 
+      value += (Math.random() * 100) - 50;
+
       // debug max values
       // if (index === 0) {
       //   value = 0;
@@ -38,6 +40,7 @@ class Spectrogram3d extends THREE.Group {
         y = maxY;
       }
 
+      floor.scale.set(0, MathUtils.map(value, 0, 250, 0, 20), 0);
       floor.position.y = y;
     })
   }

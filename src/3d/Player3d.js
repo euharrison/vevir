@@ -13,7 +13,7 @@ class Player3d extends THREE.Group {
     const hue = ColorManager.get(index);
 
     const material = new THREE.MeshPhongMaterial({ 
-      color: new THREE.Color(`hsl(${hue}, 50%, 50%)`),
+      color: new THREE.Color(`hsl(${hue}, 100%, 50%)`),
       shininess: 30,
       flatShading: true,
       side: THREE.DoubleSide,

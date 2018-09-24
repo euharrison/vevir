@@ -130,7 +130,8 @@ class Capture extends Phaser.State {
       delay: 1000,
       x: -300,
       complete: () => {
-        setTimeout(() => this.game.state.start('play'), 1000);
+        // setTimeout(() => this.game.state.start('play'), 1000);
+        this.game.state.start('play');
       },
     })
   }
